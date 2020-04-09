@@ -1,0 +1,14 @@
+<launch>
+    
+    <arg name="urdf" 					default="$(find tbd_podi_description)/urdf/podi.urdf"/>
+  	<arg name="gui" 					default="True" />
+
+    <!-- Start the P3DX's URDF broadcaster, so the appropriate TF tree is published -->
+  	<param name="robot_description" textfile="$(arg urdf)" />
+
+  	<node name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" if="$(arg gui)"/>    
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find tbd_podi_description)/rviz/podi_urdf.rviz" required="true" />
+
+</launch>

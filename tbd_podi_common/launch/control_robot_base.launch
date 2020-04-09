@@ -1,0 +1,61 @@
+<launch>
+
+	<arg name="launchRviz"				default="false" />
+	<arg name="rvizConfigPath"			default="$(find tbd_podi_common)/rviz/podi_default.rviz" />
+	<arg name="rosariaPort" 			default="/dev/ttyUSB0"/>
+	<arg name="rosariaPublishLasers" 	default="false"/> 
+	<arg name="joystickDevicePath" 		default="/dev/input/js0"/>
+	<arg name="rosbagRecordingBasePath" default="/home/lab/Dev/ros_ws/src/tbd_podi_common/bagfiles/"/>
+	<arg name="playbackRosbagPath" 		default=""/>
+	<arg name="targetX" 				default="0.0"/>
+	<arg name="targetY" 				default="0.0"/>
+	<arg name="targetTh" 				default="0.0"/>
+	<arg name="urdf" 					default="$(find tbd_podi_description)/urdf/podi.urdf"/>
+	<arg name="podiJointPublishList"	default="[/podi/handle_state]"/>
+
+	<!-- Launch ROSARIA, which communicates with the P3DX Base -->
+	<node pkg = "rosaria" type = "RosAria" name = "RosAria" output="screen">
+		<param name="port" value="$(arg rosariaPort)" type="string"/>
+		<param name="publish_aria_lasers" value="$(arg rosariaPublishLasers)" type="bool"/>
+	</node>
+
+	<!-- Start static transformations -->
+	<include file="$(find tbd_podi_common)/launch/dependencies/static_transformations.launch" />
+
+	<!-- Launch the joystick node -->
+	<node pkg="joy" type="joy_node" name="joystick_node" respawn="true">
+    	<param name="dev" value="$(arg joystickDevicePath)" type="string"/>
+  	</node>
+
+	<!-- Launch the node that will send velocity commands to ROSARIA -->
+	<node pkg="tbd_podi_common" type="control_robot" name="control_robot" output="screen">
+		<param name="rosbagRecordingBasePath" value="$(arg rosbagRecordingBasePath)" type="string"/>
+		<param name="playbackRosbagPath" value="$(arg playbackRosbagPath)"/>
+		<param name="targetX" value="$(arg targetX)"/>
+		<param name="targetY" value="$(arg targetY)"/>
+		<param name="targetTh" value="$(arg targetTh)"/>
+		<param name="control_loop_rate" value="100.0"/>
+		<param name="proportionalGainFactor" value="0.90"/>
+	</node>
+
+	<group ns="podi">
+		<!-- Launch the node that monitors the handle height and rotation -->
+		<node pkg="tbd_podi_common" type="handle_state_node.py" name="handle_state_node" output="screen">
+		</node>
+
+		<!-- Launch the node that monitors computer's battery health -->
+		<node pkg="tbd_podi_common" type="computer_state_node.py" name="computer_state_node" output="screen" />
+	</group>
+
+	<!-- Start the P3DX's URDF broadcaster, so the appropriate TF tree is published -->
+  	<param name="robot_description" textfile="$(arg urdf)" />
+  	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+	  <rosparam param="source_list" subst_value="True">$(arg podiJointPublishList)</rosparam>
+	</node>
+  	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+	<group if="$(arg launchRviz)">
+	    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizConfigPath)" required="true" />
+	</group>
+
+</launch>

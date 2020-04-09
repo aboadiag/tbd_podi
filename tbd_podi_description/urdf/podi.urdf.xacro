@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<robot name="podi" 
+    xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <!-- Import the base robot -->
+    <xacro:include filename="$(find tbd_podi_description)/urdf/pioneer3dx.urdf.xacro"/>
+
+    <!-- Import the handle -->
+    <xacro:include filename="$(find tbd_podi_description)/urdf/podi_handle.xacro"/>
+
+    <!-- Import the structure -->
+    <xacro:include filename="$(find tbd_podi_description)/urdf/podi_structure.xacro"/>
+
+    <!-- Gazebo -->
+    <xacro:include filename="$(find tbd_podi_description)/urdf/podi.gazebo.xacro"/>
+
+    <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+        <robotNamespace>/podi</robotNamespace>
+    </plugin>
+    </gazebo>
+</robot>

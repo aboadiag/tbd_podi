@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="tf" type="static_transform_publisher" name="sonar_to_laser_broadcaster"  args="0.015     0   0.15    1 0 0 0 back_sonar base_laser 100" />
+    <node pkg="tf" type="static_transform_publisher" name="sonar_to_zed_broadcaster"    args="0.0015    0   0.6223  0 0 0 1 back_sonar zed_base_link 100" />
+</launch>

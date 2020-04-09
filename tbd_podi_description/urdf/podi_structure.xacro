@@ -1,0 +1,141 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+
+    <xacro:property name="laser_scanner_width" value="0.1" />
+    <xacro:property name="laser_scanner_height" value="0.1" />
+    <xacro:property name="laser_scanner_length" value="0.1" />
+    <link name="laser_scanner">
+        <inertial>
+            <mass value="1" />
+            <origin xyz="0 0 0" />
+            <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="${laser_scanner_width} ${laser_scanner_length} ${laser_scanner_height}" />
+            </geometry>
+            <material name="laser_scanner_color">
+                <color rgba="1 1 1 1"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="${laser_scanner_width} ${laser_scanner_length} ${laser_scanner_height}" />
+            </geometry>
+        </collision>
+    </link>
+
+
+
+    <joint name="laser_scanner_to_base_joint" type="fixed">
+        <origin xyz="0.015 0 0.15" rpy="0 0 0"/>
+        <parent link="back_sonar"/>
+        <child link="laser_scanner"/>
+    </joint>
+
+    <xacro:property name="podi_face_screen_width" value="0.01" />
+    <xacro:property name="podi_face_screen_height" value="0.2" />
+    <xacro:property name="podi_face_screen_length" value="0.2" />
+    <link name="podi_face_screen">
+        <inertial>
+            <mass value="0.5" />
+            <origin xyz="0 0 0" />
+            <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="${podi_face_screen_width} ${podi_face_screen_length} ${podi_face_screen_height}" />
+            </geometry>
+            <material name="laser_scanner_color">
+                <color rgba="1 1 1 1"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="${podi_face_screen_width} ${podi_face_screen_length} ${podi_face_screen_height}" />
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="screen_to_laser_scanner_joint" type="fixed">
+        <origin xyz="0.0 0 ${podi_face_screen_height + 0.05}" rpy="0 0 0"/>
+        <parent link="laser_scanner"/>
+        <child link="podi_face_screen"/>
+    </joint>
+
+    <xacro:property name="podi_display_width" value="0.01" />
+    <xacro:property name="podi_display_height" value="0.10125" />
+    <xacro:property name="podi_display_length" value="0.18" />
+    <link name="podi_display">
+        <inertial>
+            <mass value="0.01" />
+            <origin xyz="0 0 0" />
+            <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size=" ${podi_display_length} ${podi_display_height} ${podi_display_width}" />
+            </geometry>
+            <material name="podi_display_color">
+                <color rgba="0 0 0 1"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size=" ${podi_display_length} ${podi_display_height} ${podi_display_width}" />
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="display_to_screen_joint" type="fixed">
+        <origin xyz="0.01 0 0" rpy="${3.1415927/2.0} 0 ${3.1415927/2.0}"/>
+        <parent link="podi_face_screen"/>
+        <child link="podi_display"/>
+    </joint>
+
+
+
+    <xacro:property name="camera_width" value="0.05" />
+    <xacro:property name="camera_height" value="0.05" />
+    <xacro:property name="camera_length" value="0.05" />
+    <link name="podi_front_camera">
+        <inertial>
+            <mass value="0.01" />
+            <origin xyz="0 0 0" />
+            <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="${camera_length} ${camera_width} ${camera_height}" />
+            </geometry>
+            <material name="laser_scanner_color">
+                <color rgba="1 1 1 1"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="${camera_length} ${camera_width} ${camera_height}" />
+            </geometry>
+        </collision>
+    </link>
+
+   <joint name="camera_to_screen_joint" type="fixed">
+        <origin xyz="0 0 ${podi_face_screen_height + 0.01}" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+        <parent link="podi_face_screen"/>
+        <child link="podi_front_camera"/>
+    </joint>    
+
+
+
+</robot>

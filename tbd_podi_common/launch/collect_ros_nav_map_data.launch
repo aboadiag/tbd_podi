@@ -1,0 +1,36 @@
+<launch>
+
+	<arg name="rosariaPort" 			default="/dev/ttyUSB0"/>
+	<arg name="rosariaPublishLasers" 	default="true"/>
+	<arg name="joystickDevicePath" 		default="/dev/input/js0"/>
+	<arg name="rosbagRecordingBasePath" default="/home/lab/Dev/ros_ws/src/tbd_podi_common/bagfiles/"/>
+	<arg name="playbackRosbagPath" 		default=""/>
+	<arg name="targetX" 				default="0.0"/>
+	<arg name="targetY" 				default="0.0"/>
+	<arg name="targetTh" 				default="0.0"/>
+	<arg name="urdf" 					default="$(find amr_robots_description)/urdf/pioneer3dx.urdf"/>
+  	<arg name="launchRviz" 				default="False" />
+	<arg name="rvizConfigPath"			default="$(find tbd_podi_common)/rviz/podi_default_laser_and_ZED.rviz" />
+
+    <arg name="bagDir"                  default="$(find tbd_podi_common)/bagfiles" />
+    <arg name="bagPrefix"               default="map" />
+
+
+	<include file="$(find tbd_podi_common)/launch/control_robot_laser_and_ZED.launch">
+		<arg name="rosariaPort" 			value="$(arg rosariaPort)"/>
+		<arg name="rosariaPublishLasers" 	value="$(arg rosariaPublishLasers)"/>
+		<arg name="joystickDevicePath" 		value="$(arg joystickDevicePath)"/>
+		<arg name="rosbagRecordingBasePath" value="$(arg rosbagRecordingBasePath)"/>
+		<arg name="playbackRosbagPath" 		value="$(arg playbackRosbagPath)"/>
+		<arg name="targetX"					value="$(arg targetX)"/>
+		<arg name="targetY" 				value="$(arg targetY)"/>
+		<arg name="targetTh"				value="$(arg targetTh)"/>
+		<arg name="urdf"					value="$(arg urdf)"/>
+		<arg name="launchRviz"				value="$(arg launchRviz)"/>
+		<arg name="rvizConfigPath"			value="$(arg rvizConfigPath)"/>
+	</include>
+
+    <!-- Create ROSBAG node -->
+	<node name="bag_collector" pkg="rosbag" type="record" args="-o $(arg bagDir)/$(arg bagPrefix) tf tf_static laser zed_laser cmd_vel zed_node/point_cloud/cloud_registered zed_node/rgb/camera_info zed_node/rgb/image_rect_color/compressed" required="true" />
+
+</launch>

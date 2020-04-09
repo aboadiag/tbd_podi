@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <link name="handle_base">
+        <inertial>
+            <mass value="1" />
+            <origin xyz="0 0 0" />
+            <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0.02" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="0.06" length="0.04"/>
+            </geometry>
+            <material name="handleBaseBlack">
+                <color rgba="1 1 1 1"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0.02" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="0.06" length="0.04"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="handle_bottom_plate">
+        <inertial>
+            <mass value="1" />
+            <origin xyz="0 0 0" />
+            <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.09 0.21 0.005" />
+            </geometry>
+            <material name="handleBottomBlack">
+                <color rgba="1 1 1 1"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.09 0.21 0.005" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="handle_back_plate">
+        <inertial>
+            <mass value="0.01" />
+            <origin xyz="0 0 0" />
+            <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+        </inertial>
+        <visual>
+            <origin xyz="-0.07 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.14 0.155 0.005" />
+            </geometry>
+            <material name="handleBackPlateBlack">
+                <color rgba="1 1 1 1"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="-0.07 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.14 0.155 0.005" />
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="handle_bottom">
+        <inertial>
+            <mass value="0.01" />
+            <origin xyz="0 0 0" />
+            <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+        </inertial>
+        <visual>
+            <origin xyz="-0.16666 0 0.0175" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.33 0.155 0.035" />
+            </geometry>
+            <material name="handleBackPlateBlack">
+                <color rgba="0 0 0 1"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="-0.16666 0 0.0175" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.33 0.155 0.035" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="handle_top">
+        <inertial>
+            <mass value="0.01" />
+            <origin xyz="0 0 0" />
+            <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+        </inertial>
+        <visual>
+            <origin xyz="-0.0215 0 -0.0175" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.043 0.155 0.035" />
+            </geometry>
+            <material name="handleBackPlateBlack">
+                <color rgba="0 0 0 1"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="-0.0215 0 -0.0175" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.043 0.155 0.035" />
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="handle_base_joint" type="fixed">
+        <origin xyz="-0.13 0 0.234" rpy="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="handle_base"/>
+    </joint>
+
+    <joint name="handle_rotation" type="revolute">
+        <origin xyz="0 0 0.04" rpy="0 0 0"/>
+        <axis xyz = "0 0 1" />
+        <parent link="handle_base"/>
+        <child link="handle_bottom_plate"/>
+        <limit lower="-1.57" upper="1.57" effort="0" velocity="1" />
+    </joint>
+
+    <joint name="handle_bottom_plate_to_back_plate" type="fixed">
+        <origin xyz="0.045 0 0.005" rpy="0 0.785398 0"/>
+        <parent link="handle_bottom_plate"/>
+        <child link="handle_back_plate"/>
+    </joint>
+
+    <joint name="handle_back_plate_to_bottom" type="fixed">
+        <origin xyz="-0.14 0 0.005" rpy="0 0 0"/>
+        <parent link="handle_back_plate"/>
+        <child link="handle_bottom"/>
+    </joint>
+
+    <joint name="handle_length" type="prismatic">
+        <origin xyz="-0.33 0 0.0275" rpy="0 0 0"/>
+        <axis xyz ="-1 0 0" />
+        <parent link="handle_bottom"/>
+        <child link="handle_top"/>
+        <limit lower="0" upper="0.46" effort="0" velocity="1" />
+    </joint>
+
+</robot>
