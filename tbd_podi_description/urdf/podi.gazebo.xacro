@@ -38,7 +38,7 @@
       <plugin name="screen_video_controller" filename="libgazebo_ros_video.so">
         <height>1080</height>
         <width>1920</width>
-        <topicName>/podi_screen</topicName>
+        <topicName>/podi/screen_face</topicName>
       </plugin>
     </visual>
 </gazebo>

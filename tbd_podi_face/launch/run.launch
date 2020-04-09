@@ -1,0 +1,14 @@
+<launch>
+    <arg name="output" default="screen"/>
+    <arg name="topic_name" default="podi_face"/>
+    <arg name="sim" default="false"/>
+
+    <include file="$(find tbd_screen_face)/launch/run.launch">
+        <arg name="output" value="$(arg output)" />
+        <arg name="topic_name" value="$(arg topic_name)" />
+    </include>
+
+	<node name="endpoint_server" pkg="tbd_podi_face" type="faceResponseRelay.py" output="$(arg output)" unless="$(arg sim)"/>
+    <!-- Start a video web server, so the app could interface with it -->
+    <node name="web_server" pkg="web_video_server" type="web_video_server" output="$(arg output)" unless="$(arg sim)"/>
+</launch>
