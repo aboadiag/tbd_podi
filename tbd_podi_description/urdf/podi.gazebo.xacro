@@ -1,39 +1,71 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
-<gazebo reference="laser_scanner">
-    <sensor type="gpu_ray" name="lms100x">
-        <pose>0 0 0 0 0 0</pose>
-        <!-- <visualize>false</visualize> -->
-        <update_rate>20</update_rate>
-        <ray>
-            <scan>
-                <horizontal>
-                    <samples>360</samples>
-                    <resolution>1</resolution>
-                    <min_angle>-1.570796</min_angle>
-                    <max_angle>1.570796</max_angle>
-                </horizontal>
-            </scan>
-            <range>
-                <min>0.10</min>
-                <max>30.0</max>
-                <resolution>0.01</resolution>
-            </range>
-            <noise>
-                <type>gaussian</type>
-                <mean>0.0</mean>
-                <stddev>0.01</stddev>
-            </noise>
-        </ray>
-        <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_gpu_laser.so">
-            <topicName>/scan</topicName>
-            <frameName>laser_scanner</frameName>
-        </plugin>
-    </sensor>
-</gazebo>
+  <gazebo>
+    <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+      <alwaysOn>true</alwaysOn>
+      <updateRate>100</updateRate>
+      <leftJoint>left_wheel_joint</leftJoint>
+      <rightJoint>right_wheel_joint</rightJoint>
+      <wheelSeparation>0.39</wheelSeparation>
+      <wheelDiameter>0.15</wheelDiameter>
+      <wheelTorque>20</wheelTorque>
+      <publishWheelJointState>true</publishWheelJointState>
+      <publishWheelTF>false</publishWheelTF>
+      <wheelAcceleration>1.8</wheelAcceleration>
+      <commandTopic>cmd_vel</commandTopic>
+      <robotBaseFrame>base_link</robotBaseFrame>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <odometrySource>encoder</odometrySource>      <!-- The options are world and encoder. World means getting it straight from Gazebo -->
+    </plugin>
 
-<gazebo reference="podi_display">
+    <!-- ground truth -->
+    <plugin name="p3d_base_controller" filename="libgazebo_ros_p3d.so">
+      <alwaysOn>true</alwaysOn>
+      <updateRate>100.0</updateRate>
+      <bodyName>base_link</bodyName>
+      <topicName>pose_ground_truth</topicName>
+      <gaussianNoise>0.01</gaussianNoise>
+      <frameName>map</frameName>
+      <xyzOffsets>0 0 0</xyzOffsets>
+      <rpyOffsets>0 0 0</rpyOffsets>
+    </plugin>
+  </gazebo>
+
+  <gazebo reference="laser_scanner">
+    <sensor type="gpu_ray" name="lms100x">
+      <pose>0 0 0 0 0 0</pose>
+      <!-- <visualize>false</visualize> -->
+      <update_rate>20</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.570796</min_angle>
+            <max_angle>1.570796</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.10</min>
+          <max>30.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_gpu_laser.so">
+        <topicName>/scan</topicName>
+        <frameName>laser_scanner</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="podi_display">
     <visual>
       <plugin name="screen_video_controller" filename="libgazebo_ros_video.so">
         <height>1080</height>
@@ -41,7 +73,7 @@
         <topicName>/podi/screen_face</topicName>
       </plugin>
     </visual>
-</gazebo>
+  </gazebo>
 
   <gazebo reference="podi_front_camera">
     <sensor type="camera" name="front_camera">

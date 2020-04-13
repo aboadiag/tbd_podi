@@ -3,6 +3,9 @@
 <robot name="podi" 
     xmlns:xacro="http://ros.org/wiki/xacro">
 
+    <!-- Inport inertia functions -->
+    <xacro:include filename="$(find tbd_podi_description)/urdf/inertia_tensors.xacro"/>
+
     <!-- Import the base robot -->
     <xacro:include filename="$(find tbd_podi_description)/urdf/pioneer3dx.urdf.xacro"/>
 

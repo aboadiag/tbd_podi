@@ -8,7 +8,10 @@ Here's a quick overview of each package.
 Package that interfaces with all the hardware component of Podi.
 
 ## [tbd_podi_description](tbd_podi_description)
-Package contains the URDF and meshes for Podi.
+Package that contains the URDF and meshes for Podi.
+
+## [tbd_podi_face](tbd_podi_face)
+Package that communicates with the android tablet which acts as the face for Podi.
 
 ## [tbd_podi_msgs](tbd_podi_msgs)
 Package that consists of all `msg` and `action` definitions used by Podi.

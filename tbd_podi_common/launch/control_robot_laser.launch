@@ -3,15 +3,17 @@
 	<arg name="rosariaPort" 			default="/dev/ttyUSB0"/>
 	<arg name="rosariaPublishLasers" 	default="true"/>
 	<arg name="joystickDevicePath" 		default="/dev/input/js0"/>
-	<arg name="rosbagRecordingBasePath" default="/home/lab/Dev/ros_ws/src/tbd_podi_common/bagfiles/"/>
+	<arg name="rosbagRecordingBasePath" default="$(find tbd_podi_common)/bagfiles/"/>
 	<arg name="playbackRosbagPath" 		default=""/>
 	<arg name="targetX" 				default="0.0"/>
 	<arg name="targetY" 				default="0.0"/>
 	<arg name="targetTh" 				default="0.0"/>
-	<arg name="urdf" 					default="$(find amr_robots_description)/urdf/pioneer3dx.urdf"/>
-  	<arg name="launchRviz" 				default="False" />
+	<arg name="xacro" 					default="$(find tbd_podi_description)/urdf/podi.urdf.xacro"/>  	
+	<arg name="launchRviz" 				default="False" />
 	<arg name="rvizConfigPath"			default="$(find tbd_podi_common)/rviz/podi_default_laser.rviz" />
-
+	<arg name="sim" 					default="false"/>
+	<arg name="useJoy" 					default="true" />
+	<arg name="motorTopicName" 			default="RosAria/cmd_vel" />
 
 	<include file="$(find tbd_podi_common)/launch/control_robot_base.launch">
 		<arg name="rosariaPort" 			value="$(arg rosariaPort)"/>
@@ -22,9 +24,12 @@
 		<arg name="targetX"					value="$(arg targetX)"/>
 		<arg name="targetY" 				value="$(arg targetY)"/>
 		<arg name="targetTh"				value="$(arg targetTh)"/>
-		<arg name="urdf"					value="$(arg urdf)"/>
+		<arg name="xacro"					value="$(arg xacro)"/>
 		<arg name="launchRviz"				value="$(arg launchRviz)"/>
 		<arg name="rvizConfigPath"			value="$(arg rvizConfigPath)"/>
+		<arg name="sim" 					value="$(arg sim)"/>
+		<arg name="useJoy" 					value="$(arg useJoy)" />
+		<arg name="motorTopicName" 			value="$(arg motorTopicName)" />
 	</include>
 
 	<!-- Launch the nodes that crop its readings -->

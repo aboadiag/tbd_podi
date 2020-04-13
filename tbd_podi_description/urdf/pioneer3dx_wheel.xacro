@@ -62,15 +62,14 @@
     <!-- Parent to the wheel -->
     <joint name="${suffix}_wheel_joint" type="continuous">
       <axis xyz="0 1 0"/>
-      <anchor xyz="0 0 0"/>
-      <limit effort="100" velocity="100" />
-      <joint_properties damping="0.0" friction="0.0" />
       <origin xyz="0 ${reflect*0.158} 0.091" rpy="0 0 0"/>
       <parent link="${parent}"/>
       <child link="${suffix}_wheel"/>
     </joint>
 
     <!-- Transmission variable for gazebo -->
+    <!-- This is commented out because it is used by gazebo_ros_controller, it will superseed
+    the internal wheel controller if set
     <transmission type="pr2_mechanism_model/SimpleTransmission" name="${suffix}_wheel_trans">
       <type>transmission_interface/SimpleTransmission</type>
       <actuator name="${suffix}_wheel_motor">
@@ -80,10 +79,7 @@
       <joint name="${suffix}_wheel_joint">
         <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
       </joint>
-    </transmission>
-
-
-
+    </transmission> -->
 
     <gazebo reference="${suffix}_hubcap">
       <material value="Gazebo/Yellow"/>

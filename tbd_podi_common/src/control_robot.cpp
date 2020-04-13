@@ -5,13 +5,16 @@ namespace tbd_podi_common {
 	ControlRobot::ControlRobot() : private_nh("~") 
 	{
 
+		private_nh.param("control_loop_rate", controlLoopHz, 100.0);
+		private_nh.param("proportionalGainFactor", proportionalGainFactor, 0.90);
+
 		lin_max = 1.0;
 		ang_max = M_PI / 5;
 		lin_min = 0.01;
 		ang_min = 0.05;
 
 		ros_navigation_cmd_vel_sub = n.subscribe("cmd_vel", 1000, &ControlRobot::navigationCB, this);
-		cmd_vel_pub = n.advertise<geometry_msgs::Twist>("RosAria/cmd_vel", 1000);
+		cmd_vel_pub = n.advertise<geometry_msgs::Twist>("output_cmd_vel", 1);
 		joy_sub = n.subscribe("joy", 1000, &ControlRobot::joyCB, this);
 
 		rosbagTopicName = "/Podi/cmd_vel_stamped";
@@ -25,9 +28,6 @@ namespace tbd_podi_common {
 		newJoyVel = false;
 		arePrintingRobotPose = false;
 		isRecordingRosbagOpen = false;
-
-		private_nh.param("control_loop_rate", controlLoopHz, 100.0);
-		private_nh.param("proportionalGainFactor", proportionalGainFactor, 0.90);
 
 		if (!private_nh.getParam("rosbagRecordingBasePath", rosbagRecordingDir)) {
 			ROS_ERROR("ROSParam rosbagRecordingDir not defined. Unexpected behavior may ensue when trying to record a rosbag.");
@@ -299,7 +299,7 @@ namespace tbd_podi_common {
 			loop_rate.sleep();
 			// Debug and check the cycle time
 			if (loop_rate.cycleTime() > loop_rate.expectedCycleTime()){
-				ROS_WARN("Looping Rate slower at %.4f instead of %.4f", loop_rate.cycleTime().toSec(),loop_rate.expectedCycleTime().toSec());
+				ROS_WARN("looping rate is slower at %.4f instead of %.4f", loop_rate.cycleTime().toSec(),loop_rate.expectedCycleTime().toSec());
 			}
 		}
 	}
@@ -408,7 +408,7 @@ namespace tbd_podi_common {
 				recordingBag->write(rosbagTopicName, ros::Time::now(), spdStamped);
 			}
 		}
-		// // ROS_INFO("lin_spd: %0.2f, ang_spd: %0.2f", spd.linear.x, spd.angular.z);
+		ROS_INFO("lin_spd: %0.2f, ang_spd: %0.2f", spd.linear.x, spd.angular.z);
 		cmd_vel_pub.publish(spd);
 	}
 
@@ -532,7 +532,6 @@ namespace tbd_podi_common {
 		spd.angular.z = ang_max * ang_axes;
 
 		{
-			
 			std::lock_guard<std::mutex> joyLock(joyVelMutex);
 			joyVel = spd;
 			newJoyVel = true;

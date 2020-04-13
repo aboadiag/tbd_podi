@@ -1,34 +1,34 @@
 <launch>
-
-	<arg name="launchRviz"				default="false" />
-	<arg name="rvizConfigPath"			default="$(find tbd_podi_common)/rviz/podi_default.rviz" />
-	<arg name="rosariaPort" 			default="/dev/ttyUSB0"/>
-	<arg name="rosariaPublishLasers" 	default="false"/> 
-	<arg name="joystickDevicePath" 		default="/dev/input/js0"/>
-	<arg name="rosbagRecordingBasePath" default="/home/lab/Dev/ros_ws/src/tbd_podi_common/bagfiles/"/>
-	<arg name="playbackRosbagPath" 		default=""/>
-	<arg name="targetX" 				default="0.0"/>
-	<arg name="targetY" 				default="0.0"/>
-	<arg name="targetTh" 				default="0.0"/>
-	<arg name="urdf" 					default="$(find tbd_podi_description)/urdf/podi.urdf"/>
-	<arg name="podiJointPublishList"	default="[/podi/handle_state]"/>
+	<arg name="robotName" default="podi" />
+	<arg name="launchRviz" default="false" />
+	<arg name="rvizConfigPath" default="$(find tbd_podi_common)/rviz/podi_default.rviz" />
+	<arg name="rosariaPort" default="/dev/ttyUSB0"/>
+	<arg name="rosariaPublishLasers" default="false"/>
+	<arg name="joystickDevicePath" default="/dev/input/js0"/>
+	<arg name="rosbagRecordingBasePath" default="$(find tbd_podi_common)/bagfiles/"/>
+	<arg name="playbackRosbagPath" default="$(find tbd_podi_common)/bagfiles/"/>
+	<arg name="targetX" default="0.0"/>
+	<arg name="targetY" default="0.0"/>
+	<arg name="targetTh" default="0.0"/>
+	<arg name="xacro" default="$(find tbd_podi_description)/urdf/podi.urdf.xacro"/>
+	<arg name="podiJointPublishList" default="[/podi/handle_state]"/>
+	<arg name="sim" default="false"/>
+	<arg name="useJoy" default="true" />
+	<arg name="motorTopicName" default="RosAria/cmd_vel" />
 
 	<!-- Launch ROSARIA, which communicates with the P3DX Base -->
-	<node pkg = "rosaria" type = "RosAria" name = "RosAria" output="screen">
+	<node pkg = "rosaria" type = "RosAria" name = "RosAria" output="screen" unless="$(arg sim)">
 		<param name="port" value="$(arg rosariaPort)" type="string"/>
 		<param name="publish_aria_lasers" value="$(arg rosariaPublishLasers)" type="bool"/>
 	</node>
 
-	<!-- Start static transformations -->
-	<include file="$(find tbd_podi_common)/launch/dependencies/static_transformations.launch" />
-
 	<!-- Launch the joystick node -->
-	<node pkg="joy" type="joy_node" name="joystick_node" respawn="true">
-    	<param name="dev" value="$(arg joystickDevicePath)" type="string"/>
-  	</node>
+	<node pkg="joy" type="joy_node" name="joystick_node" respawn="true" if="$(arg useJoy)">
+		<param name="dev" value="$(arg joystickDevicePath)" type="string"/>
+	</node>
 
-	<!-- Launch the node that will send velocity commands to ROSARIA -->
-	<node pkg="tbd_podi_common" type="control_robot" name="control_robot" output="screen">
+	<!-- Launch the node that will send velocity commands to actuators -->
+	<node pkg="tbd_podi_common" type="control_robot" name="podi_common_control_robot" output="screen">
 		<param name="rosbagRecordingBasePath" value="$(arg rosbagRecordingBasePath)" type="string"/>
 		<param name="playbackRosbagPath" value="$(arg playbackRosbagPath)"/>
 		<param name="targetX" value="$(arg targetX)"/>
@@ -36,26 +36,33 @@
 		<param name="targetTh" value="$(arg targetTh)"/>
 		<param name="control_loop_rate" value="100.0"/>
 		<param name="proportionalGainFactor" value="0.90"/>
+		<remap from="output_cmd_vel" to="$(arg motorTopicName)"/>
 	</node>
 
 	<group ns="podi">
 		<!-- Launch the node that monitors the handle height and rotation -->
-		<node pkg="tbd_podi_common" type="handle_state_node.py" name="handle_state_node" output="screen">
+		<node pkg="tbd_podi_common" type="handle_state_node.py" name="handle_state_node" output="screen" unless="$(arg sim)">
 		</node>
 
 		<!-- Launch the node that monitors computer's battery health -->
-		<node pkg="tbd_podi_common" type="computer_state_node.py" name="computer_state_node" output="screen" />
+		<node pkg="tbd_podi_common" type="computer_state_node.py" name="computer_state_node" output="screen" unless="$(arg sim)" />
 	</group>
 
 	<!-- Start the P3DX's URDF broadcaster, so the appropriate TF tree is published -->
-  	<param name="robot_description" textfile="$(arg urdf)" />
-  	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-	  <rosparam param="source_list" subst_value="True">$(arg podiJointPublishList)</rosparam>
+	<param name="/podi/robot_description" command="$(find xacro)/xacro $(arg xacro)" />
+	
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+		<rosparam param="source_list" subst_value="True">$(arg podiJointPublishList)</rosparam>
+		<remap from="robot_description" to="/podi/robot_description" />
 	</node>
-  	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+	<!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+		<param name="publish_frequency" type="double" value="30.0" />
+		<remap from="robot_description" to="/podi/robot_description" />
+	</node> -->
 
 	<group if="$(arg launchRviz)">
-	    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizConfigPath)" required="true" />
+		<node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizConfigPath)" required="true" />
 	</group>
 
 </launch>
