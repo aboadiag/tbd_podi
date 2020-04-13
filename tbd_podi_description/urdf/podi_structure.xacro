@@ -2,14 +2,14 @@
 
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
-    <link name="laser_scanner">
+    <link name="${robotname}_laser_scanner">
         <inertial>
             <mass value="1" />
             <origin xyz="0 0 0" />
             <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
         </inertial>
         <visual>
-            <origin xyz="0 0 0" rpy="${pi} 0 0"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry name="lms100">
                 <mesh filename="package://tbd_podi_description/meshes/sick-lms1xx.dae"/>
             </geometry>
@@ -18,23 +18,23 @@
             </material>
         </visual>
         <collision>
-            <origin xyz="0 0 0" rpy="${pi} 0 0"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry name="lms100">
                 <mesh filename="package://tbd_podi_description/meshes/sick-lms1xx.dae"/>
             </geometry>
         </collision>
     </link>
 
-    <joint name="laser_scanner_to_base_joint" type="fixed">
-        <origin xyz="0.015 0 0.15" rpy="0 0 0"/>
+    <joint name="${robotname}_laser_scanner_to_base_joint" type="fixed">
+        <origin xyz="0.015 0 0.15" rpy="${pi} 0 0"/>
         <parent link="back_sonar"/>
-        <child link="laser_scanner"/>
+        <child link="${robotname}_laser_scanner"/>
     </joint>
 
-    <xacro:property name="podi_face_screen_width" value="0.01" />
-    <xacro:property name="podi_face_screen_height" value="0.2" />
-    <xacro:property name="podi_face_screen_length" value="0.2" />
-    <link name="podi_face_screen">
+    <xacro:property name="face_screen_width" value="0.01" />
+    <xacro:property name="face_screen_height" value="0.2" />
+    <xacro:property name="face_screen_length" value="0.2" />
+    <link name="${robotname}_face_screen">
         <inertial>
             <mass value="0.5" />
             <origin xyz="0 0 0" />
@@ -43,30 +43,30 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <box size="${podi_face_screen_width} ${podi_face_screen_length} ${podi_face_screen_height}" />
+                <box size="${face_screen_width} ${face_screen_length} ${face_screen_height}" />
             </geometry>
-            <material name="laser_scanner_color">
+            <material name="face_screen_color">
                 <color rgba="1 1 1 1"/>
             </material>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <box size="${podi_face_screen_width} ${podi_face_screen_length} ${podi_face_screen_height}" />
+                <box size="${face_screen_width} ${face_screen_length} ${face_screen_height}" />
             </geometry>
         </collision>
     </link>
 
     <joint name="screen_to_laser_scanner_joint" type="fixed">
-        <origin xyz="0.0 0 ${podi_face_screen_height + 0.05}" rpy="0 0 0"/>
-        <parent link="laser_scanner"/>
-        <child link="podi_face_screen"/>
+        <origin xyz="0.0 0 ${0.15 + face_screen_height + 0.05}" rpy="0 0 0"/>
+        <parent link="back_sonar"/>
+        <child link="${robotname}_face_screen"/>
     </joint>
 
-    <xacro:property name="podi_display_width" value="0.01" />
-    <xacro:property name="podi_display_height" value="0.10125" />
-    <xacro:property name="podi_display_length" value="0.18" />
-    <link name="podi_display">
+    <xacro:property name="display_width" value="0.01" />
+    <xacro:property name="display_height" value="0.10125" />
+    <xacro:property name="display_length" value="0.18" />
+    <link name="${robotname}_display">
         <inertial>
             <mass value="0.01" />
             <origin xyz="0 0 0" />
@@ -75,28 +75,28 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <box size=" ${podi_display_length} ${podi_display_height} ${podi_display_width}" />
+                <box size=" ${display_length} ${display_height} ${display_width}" />
             </geometry>
-            <material name="podi_display_color">
+            <material name="${robotname}_display_color">
                 <color rgba="0 0 0 1"/>
             </material>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <box size=" ${podi_display_length} ${podi_display_height} ${podi_display_width}" />
+                <box size=" ${display_length} ${display_height} ${display_width}" />
             </geometry>
         </collision>
     </link>
 
     <joint name="display_to_screen_joint" type="fixed">
         <origin xyz="0.01 0 0" rpy="${3.1415927/2.0} 0 ${3.1415927/2.0}"/>
-        <parent link="podi_face_screen"/>
-        <child link="podi_display"/>
+        <parent link="${robotname}_face_screen"/>
+        <child link="${robotname}_display"/>
     </joint>
 
 
-    <link name="podi_front_camera">
+    <link name="${robotname}_front_camera">
         <inertial>
             <mass value="0.01" />
             <origin xyz="0 0 0" />
@@ -120,10 +120,10 @@
     </link>
 
    <joint name="camera_to_screen_joint" type="fixed">
-        <origin xyz="0 0 ${podi_face_screen_height/2 + 0.025}" rpy="0 0 0"/>
+        <origin xyz="0 0 ${face_screen_height/2 + 0.025}" rpy="0 0 0"/>
         <axis xyz="0 1 0"/>
-        <parent link="podi_face_screen"/>
-        <child link="podi_front_camera"/>
+        <parent link="${robotname}_face_screen"/>
+        <child link="${robotname}_front_camera"/>
     </joint>    
 
 

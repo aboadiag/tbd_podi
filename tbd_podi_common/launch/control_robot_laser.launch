@@ -14,6 +14,7 @@
 	<arg name="sim" 					default="false"/>
 	<arg name="useJoy" 					default="true" />
 	<arg name="motorTopicName" 			default="RosAria/cmd_vel" />
+	<arg name="laserTopicName"			default="RosAria/lms1xx_1_laserscan" />
 
 	<include file="$(find tbd_podi_common)/launch/control_robot_base.launch">
 		<arg name="rosariaPort" 			value="$(arg rosariaPort)"/>
@@ -33,6 +34,10 @@
 	</include>
 
 	<!-- Launch the nodes that crop its readings -->
-  	<node pkg="tbd_podi_common" type="laser_scan_frame_transform" name="podi_laser_scan_frame_transform" output="screen"/>
+  	<node pkg="tbd_podi_common" type="laser_scan_frame_transform" name="podi_laser_scan_frame_transform" output="screen">
+		<remap from="incoming_laser_topic" to="$(arg laserTopicName)" />
+	</node>
+	<!-- Generate the transform between the transformed frame and original frame. -->
+	<node pkg="tf" type="static_transform_publisher" name="sonar_to_laser_broadcaster"  args="0 0 0 1 0 0 0 podi_laser_scanner base_laser 100" />
 
 </launch>

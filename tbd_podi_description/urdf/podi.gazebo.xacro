@@ -13,10 +13,10 @@
       <publishWheelJointState>true</publishWheelJointState>
       <publishWheelTF>false</publishWheelTF>
       <wheelAcceleration>1.8</wheelAcceleration>
-      <commandTopic>cmd_vel</commandTopic>
+      <commandTopic>${robotname}/cmd_vel</commandTopic>
       <robotBaseFrame>base_link</robotBaseFrame>
-      <odometryTopic>odom</odometryTopic>
-      <odometryFrame>odom</odometryFrame>
+      <odometryTopic>${robotname}/odom</odometryTopic>
+      <odometryFrame>${robotname}_odom</odometryFrame>
       <odometrySource>encoder</odometrySource>      <!-- The options are world and encoder. World means getting it straight from Gazebo -->
     </plugin>
 
@@ -25,7 +25,7 @@
       <alwaysOn>true</alwaysOn>
       <updateRate>100.0</updateRate>
       <bodyName>base_link</bodyName>
-      <topicName>pose_ground_truth</topicName>
+      <topicName>${robotname}/pose_ground_truth</topicName>
       <gaussianNoise>0.01</gaussianNoise>
       <frameName>map</frameName>
       <xyzOffsets>0 0 0</xyzOffsets>
@@ -33,7 +33,7 @@
     </plugin>
   </gazebo>
 
-  <gazebo reference="laser_scanner">
+  <gazebo reference="${robotname}_laser_scanner">
     <sensor type="gpu_ray" name="lms100x">
       <pose>0 0 0 0 0 0</pose>
       <!-- <visualize>false</visualize> -->
@@ -59,23 +59,23 @@
         </noise>
       </ray>
       <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_gpu_laser.so">
-        <topicName>/scan</topicName>
-        <frameName>laser_scanner</frameName>
+        <topicName>${robotname}/scan</topicName>
+        <frameName>${robotname}_laser_scanner</frameName>
       </plugin>
     </sensor>
   </gazebo>
 
-  <gazebo reference="podi_display">
+  <gazebo reference="${robotname}_display">
     <visual>
       <plugin name="screen_video_controller" filename="libgazebo_ros_video.so">
         <height>1080</height>
         <width>1920</width>
-        <topicName>/podi/screen_face</topicName>
+        <topicName>${robotname}/screen_face</topicName>
       </plugin>
     </visual>
   </gazebo>
 
-  <gazebo reference="podi_front_camera">
+  <gazebo reference="${robotname}_front_camera">
     <sensor type="camera" name="front_camera">
       <update_rate>30.0</update_rate>
       <camera name="head">
@@ -101,10 +101,10 @@
       <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
         <alwaysOn>true</alwaysOn>
         <updateRate>0.0</updateRate>
-        <cameraName>/front_camera</cameraName>
-        <imageTopicName>image_raw</imageTopicName>
+        <cameraName>front_camera</cameraName>
+        <imageTopicName>${robotname}/image_raw</imageTopicName>
         <cameraInfoTopicName>camera_info</cameraInfoTopicName>
-        <frameName>podi_front_camera</frameName>
+        <frameName>${robotname}_front_camera</frameName>
         <hackBaseline>0.07</hackBaseline>
         <distortionK1>0.0</distortionK1>
         <distortionK2>0.0</distortionK2>

@@ -21,7 +21,7 @@ class LaserScanFrameTransform
 LaserScanFrameTransform::LaserScanFrameTransform() {
   newLaserFrame = "base_laser";
   newLaserTopic = "laser";
-  laserTopicInput = nh1.subscribe("RosAria/lms1xx_1_laserscan", 1000, &LaserScanFrameTransform::laserMessageReceived, this);
+  laserTopicInput = nh1.subscribe("incoming_laser_topic", 1000, &LaserScanFrameTransform::laserMessageReceived, this);
   laserTopicOutput = nh2.advertise<sensor_msgs::LaserScan>(newLaserTopic, 1000);
   // set the limit of the sensor
   minAngle = -1.0 * M_PI * 5.0/8.0;
@@ -41,7 +41,7 @@ void LaserScanFrameTransform::laserMessageReceived(const sensor_msgs::LaserScan&
   std::vector<float> newRanges;
   double angle = msg.angle_min;  // rad
   // Initial distance-based clustering of lines
-  for (int i = 0; i < msg.ranges.size(); i++) {
+  for (int i = msg.ranges.size() - 1; i >= 0; i--) {
     // ROS_INFO("angle: %f", angle);
     if (angle > minAngle && angle < maxAngle) {
       newRanges.push_back(msg.ranges[i]);
