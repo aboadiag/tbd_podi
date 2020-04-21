@@ -70,7 +70,8 @@
       <plugin name="screen_video_controller" filename="libgazebo_ros_video.so">
         <height>1080</height>
         <width>1920</width>
-        <topicName>${robotname}/screen_face</topicName>
+        <topicName>screen_face</topicName>
+        <robotNamespace>${robotname}</robotNamespace>
       </plugin>
     </visual>
   </gazebo>

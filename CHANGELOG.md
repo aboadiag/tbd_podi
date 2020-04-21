@@ -6,6 +6,9 @@
 
 
 ## [0.2.0] - 2020-04-17 -->
+## [Unreleased]
+#### Fixed
+- Incorrect namespace caused Gazebo to crash.
 
 ## [1.0.1] - 2020-04-21
 #### Added
