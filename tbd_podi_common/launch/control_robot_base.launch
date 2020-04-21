@@ -1,7 +1,7 @@
 <launch>
-	<arg name="robotName" default="podi" />
-	<arg name="launchRviz" default="false" />
-	<arg name="rvizConfigPath" default="$(find tbd_podi_common)/rviz/podi_default.rviz" />
+	<arg name="robot_name" default="podi" />
+	<arg name="launch_rviz" default="false" />
+	<arg name="rviz_config_path" default="$(find tbd_podi_common)/rviz/podi_default.rviz" />
 	<arg name="rosariaPort" default="/dev/ttyUSB0"/>
 	<arg name="rosariaPublishLasers" default="false"/>
 	<arg name="joystickDevicePath" default="/dev/input/js0"/>
@@ -11,10 +11,10 @@
 	<arg name="targetY" default="0.0"/>
 	<arg name="targetTh" default="0.0"/>
 	<arg name="xacro" default="$(find tbd_podi_description)/urdf/podi.urdf.xacro"/>
-	<arg name="podiJointPublishList" default="[/podi/handle_state]"/>
+	<arg name="joint_publish_list" default="[/podi/handle_state]"/>
 	<arg name="sim" default="false"/>
-	<arg name="useJoy" default="true" />
-	<arg name="motorTopicName" default="RosAria/cmd_vel" />
+	<arg name="use_joy" default="true" />
+	<arg name="motor_topic_name" default="RosAria/cmd_vel" />
 
 	<!-- Launch ROSARIA, which communicates with the P3DX Base -->
 	<node pkg = "rosaria" type = "RosAria" name = "RosAria" output="screen" unless="$(arg sim)">
@@ -23,7 +23,7 @@
 	</node>
 
 	<!-- Launch the joystick node -->
-	<node pkg="joy" type="joy_node" name="joystick_node" respawn="true" if="$(arg useJoy)">
+	<node pkg="joy" type="joy_node" name="joystick_node" respawn="true" if="$(arg use_joy)">
 		<param name="dev" value="$(arg joystickDevicePath)" type="string"/>
 	</node>
 
@@ -36,10 +36,10 @@
 		<param name="targetTh" value="$(arg targetTh)"/>
 		<param name="control_loop_rate" value="100.0"/>
 		<param name="proportionalGainFactor" value="0.90"/>
-		<remap from="output_cmd_vel" to="$(arg motorTopicName)"/>
+		<remap from="output_cmd_vel" to="$(arg motor_topic_name)"/>
 	</node>
 
-	<group ns="podi">
+	<group ns="$(arg robot_name)">
 		<!-- Launch the node that monitors the handle height and rotation -->
 		<node pkg="tbd_podi_common" type="handle_state_node.py" name="handle_state_node" output="screen" unless="$(arg sim)">
 		</node>
@@ -49,20 +49,19 @@
 	</group>
 
 	<!-- Start the P3DX's URDF broadcaster, so the appropriate TF tree is published -->
-	<param name="/podi/robot_description" command="$(find xacro)/xacro $(arg xacro)" />
+	<param name="$(arg robot_name)/robot_description" command="$(find xacro)/xacro $(arg xacro)" />
 	
 	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-		<rosparam param="source_list" subst_value="True">$(arg podiJointPublishList)</rosparam>
-		<remap from="robot_description" to="/podi/robot_description" />
+		<rosparam param="source_list" subst_value="True">$(arg joint_publish_list)</rosparam>
+		<remap from="robot_description" to="$(arg robot_name)/robot_description" />
 	</node>
 
-	<!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
 		<param name="publish_frequency" type="double" value="30.0" />
-		<remap from="robot_description" to="/podi/robot_description" />
-	</node> -->
+		<remap from="robot_description" to="$(arg robot_name)/robot_description" />
+		<param name="tf_prefix" value="$(arg robot_name)" />
+	</node>
 
-	<group if="$(arg launchRviz)">
-		<node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizConfigPath)" required="true" />
-	</group>
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_config_path)" required="true" if="$(arg launch_rviz)"/>
 
 </launch>

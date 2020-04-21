@@ -14,9 +14,9 @@
       <publishWheelTF>false</publishWheelTF>
       <wheelAcceleration>1.8</wheelAcceleration>
       <commandTopic>${robotname}/cmd_vel</commandTopic>
-      <robotBaseFrame>base_link</robotBaseFrame>
       <odometryTopic>${robotname}/odom</odometryTopic>
-      <odometryFrame>${robotname}_odom</odometryFrame>
+      <odometryFrame>${robotname}/odom</odometryFrame>
+      <robotBaseFrame>${robotname}/base_link</robotBaseFrame>
       <odometrySource>encoder</odometrySource>      <!-- The options are world and encoder. World means getting it straight from Gazebo -->
     </plugin>
 

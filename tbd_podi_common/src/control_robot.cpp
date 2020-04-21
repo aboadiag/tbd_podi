@@ -408,7 +408,7 @@ namespace tbd_podi_common {
 				recordingBag->write(rosbagTopicName, ros::Time::now(), spdStamped);
 			}
 		}
-		ROS_INFO("lin_spd: %0.2f, ang_spd: %0.2f", spd.linear.x, spd.angular.z);
+		// ROS_INFO("lin_spd: %0.2f, ang_spd: %0.2f", spd.linear.x, spd.angular.z);
 		cmd_vel_pub.publish(spd);
 	}
 
