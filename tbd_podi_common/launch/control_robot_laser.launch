@@ -1,20 +1,21 @@
 <launch>
-	<arg name="robot_name"				default="podi" />
-	<arg name="rosariaPort" 			default="/dev/ttyUSB0"/>
-	<arg name="rosariaPublishLasers" 	default="true"/>
-	<arg name="joystickDevicePath" 		default="/dev/input/js0"/>
-	<arg name="rosbagRecordingBasePath" default="$(find tbd_podi_common)/bagfiles/"/>
-	<arg name="playbackRosbagPath" 		default=""/>
-	<arg name="targetX" 				default="0.0"/>
-	<arg name="targetY" 				default="0.0"/>
-	<arg name="targetTh" 				default="0.0"/>
-	<arg name="xacro" 					default="$(find tbd_podi_description)/urdf/podi.urdf.xacro"/>  	
-	<arg name="launch_rviz" 			default="false" />
-	<arg name="rviz_config_path" 		default="$(find tbd_podi_common)/rviz/podi_default_laser.rviz" />
-	<arg name="sim" 					default="false"/>
-	<arg name="use_joy" 				default="true" />
-	<arg name="motor_topic_name" 		default="RosAria/cmd_vel" />
-	<arg name="laser_topic_name"		default="RosAria/lms1xx_1_laserscan" />
+	<arg name="robot_name"					default="podi" />
+	<arg name="rosariaPort" 				default="/dev/ttyUSB0"/>
+	<arg name="rosariaPublishLasers" 		default="true"/>
+	<arg name="joystickDevicePath" 			default="/dev/input/js0"/>
+	<arg name="rosbagRecordingBasePath" 	default="$(find tbd_podi_common)/bagfiles/"/>
+	<arg name="playbackRosbagPath" 			default=""/>
+	<arg name="targetX" 					default="0.0"/>
+	<arg name="targetY" 					default="0.0"/>
+	<arg name="targetTh" 					default="0.0"/>
+	<arg name="xacro" 						default="$(find tbd_podi_description)/urdf/podi.urdf.xacro"/>  	
+	<arg name="launch_rviz" 				default="false" />
+	<arg name="rviz_config_path" 			default="$(find tbd_podi_common)/rviz/podi_default_laser.rviz" />
+	<arg name="sim" 						default="false"/>
+	<arg name="use_joy" 					default="true" />
+	<arg name="motor_topic_name" 			default="RosAria/cmd_vel" />
+	<arg name="incoming_laser_topic_name"	default="RosAria/lms1xx_1_laserscan" />
+	<arg name="trans_laser_topic_name"		default="$(arg robot_name)/laser" />
 
 	<include file="$(find tbd_podi_common)/launch/control_robot_base.launch">
 		<arg name="rosariaPort" 			value="$(arg rosariaPort)"/>
@@ -35,9 +36,8 @@
 
 	<!-- Launch the nodes that crop its readings -->
   	<node pkg="tbd_podi_common" type="laser_scan_frame_transform" name="podi_laser_scan_frame_transform" output="screen">
-		<remap from="incoming_laser_topic" to="$(arg laser_topic_name)" />
+		<remap from="laser" 			to="$(arg incoming_laser_topic_name)" />
+		<remap from="transformed_laser" to="$(arg trans_laser_topic_name)" />
 	</node>
-	<!-- Generate the transform between the transformed frame and original frame. -->
-	<node pkg="tf" type="static_transform_publisher" name="sonar_to_laser_broadcaster"  args="0 0 0 1 0 0 0 $(arg robot_name)/podi_laser_scanner base_laser 100" />
-
+	
 </launch>

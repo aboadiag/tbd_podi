@@ -7,8 +7,13 @@
 
 ## [0.2.0] - 2020-04-17 -->
 ## [Unreleased]
+#### Changed
+- Relied on TF_prefix and namespace to specify type of robot instead of encoding the name into the URDF.
+
 #### Fixed
 - Incorrect namespace caused Gazebo to crash.
+- Incorrect Laser parameter in the Gazebo description of the front laser
+- Incorrect calculation for the laser limiter node that ignores certain readings.
 
 ## [1.0.1] - 2020-04-21
 #### Added
