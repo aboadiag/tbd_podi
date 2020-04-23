@@ -1,0 +1,23 @@
+TrajectoryPlannerROS:
+  max_vel_x: 0.8 # The maximum forward velocity allowed for the base in meters/sec
+  min_vel_x: 0.03 # The minimum forward velocity allowed for the base in meters/sec.
+  max_vel_theta: 0.8 #The maximum rotational velocity allowed for the base in radians/sec
+  min_vel_theta: -0.8 #The minimum rotational velocity allowed for the base in radians/sec
+  min_in_place_vel_theta: 0.01 # The minimum rotational velocity allowed for the base while performing in-place rotations in radians/sec
+  escape_vel: 0.0 # -0.1 # m/s, the speed used for reversing when unstucking itself
+
+  acc_lim_theta: 2.0 #The rotational acceleration limit of the robot in radians/sec^2
+  acc_lim_x: 0.7 #The x acceleration limit of the robot in meters/sec^2
+
+  yaw_goal_tolerance: 0.25 # 0.25 # rotational tolerance of the controller in radians when achieving its goal
+  xy_goal_tolerance: 0.05 # the translational tolerance of the controller in meters when achieving its goal
+
+  latch_xy_goal_tolerance: true
+  meter_scoring: true #Whether the gdist_scale and pdist_scale parameters should assume that goal_distance and path_distance are expressed in units of meters or cells.
+  pdist_scale: 0.6 # 3.5 # The weighting for how much the controller should stay close to the path it was given, maximal possible value is 5.0
+  gdist_scale: 0.8 # 0.8 # The weighting for how much the controller should attempt to reach its local goal, also controls speed, maximal possible value is 5.0
+  occdist_scale: 0.01
+
+  dwa: false
+  use_dwa: false
+  holonomic_robot: false #Determines whether velocity commands are generated for a holonomic or non-holonomic robot.

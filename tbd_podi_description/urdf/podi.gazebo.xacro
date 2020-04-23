@@ -7,16 +7,17 @@
       <updateRate>100</updateRate>
       <leftJoint>left_wheel_joint</leftJoint>
       <rightJoint>right_wheel_joint</rightJoint>
-      <wheelSeparation>0.39</wheelSeparation>
-      <wheelDiameter>0.15</wheelDiameter>
-      <wheelTorque>20</wheelTorque>
+      <wheelSeparation>0.316</wheelSeparation>
+      <wheelDiameter>0.18</wheelDiameter>
+      <wheelTorque>15</wheelTorque>
       <publishWheelJointState>true</publishWheelJointState>
       <publishWheelTF>false</publishWheelTF>
       <wheelAcceleration>1.8</wheelAcceleration>
-      <commandTopic>${robotname}/cmd_vel</commandTopic>
-      <odometryTopic>${robotname}/odom</odometryTopic>
-      <odometryFrame>${robotname}/odom</odometryFrame>
-      <robotBaseFrame>${robotname}/base_link</robotBaseFrame>
+      <commandTopic>cmd_vel</commandTopic>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <robotBaseFrame>base_link</robotBaseFrame>
+      <robotNamespace>${robotname}</robotNamespace>
       <odometrySource>encoder</odometrySource>      <!-- The options are world and encoder. World means getting it straight from Gazebo -->
     </plugin>
 
