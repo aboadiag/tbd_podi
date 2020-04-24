@@ -2,7 +2,7 @@
 
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
-    <link name="${robotname}_laser_scanner">
+    <link name="laser_scanner">
         <inertial>
             <mass value="1" />
             <origin xyz="0 0 0" />
@@ -25,10 +25,10 @@
         </collision>
     </link>
 
-    <joint name="${robotname}_laser_scanner_to_base_joint" type="fixed">
+    <joint name="laser_scanner_to_base_joint" type="fixed">
         <origin xyz="0.015 0 0.15" rpy="${pi} 0 0"/>
         <parent link="back_sonar"/>
-        <child link="${robotname}_laser_scanner"/>
+        <child link="laser_scanner"/>
     </joint>
 
     <xacro:property name="face_screen_width" value="0.01" />

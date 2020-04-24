@@ -15,3 +15,6 @@ Package that communicates with the android tablet which acts as the face for Pod
 
 ## [tbd_podi_msgs](tbd_podi_msgs)
 Package that consists of all `msg` and `action` definitions used by Podi.
+
+## [tbd_podi_2dnav](tbd_podi_2dnav)
+Package that contains the needed maps, configs, and launch files to run ROS Navigation on Podi.

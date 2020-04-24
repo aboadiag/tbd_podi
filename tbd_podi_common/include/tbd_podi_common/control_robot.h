@@ -94,12 +94,19 @@ namespace tbd_podi_common {
 
   	tf::TransformListener tf_;
 
-  	void stopRobot(rosbag::Bag* recordingBag);
+  	void stopRobot();
   	void playbackBagFn(std::string playbackRosbagPath, double p);
-  	void publishVelocity(geometry_msgs::Twist &spd, rosbag::Bag* recordingBag);
+  	void publishVelocity(geometry_msgs::Twist &spd);
   	void messageCB(const std_msgs::Int16 &msg);
   	void navigationCB(const geometry_msgs::Twist &msg);
   	void joyCB(const sensor_msgs::Joy &msg);
+
+	void startBagRecording();
+	void stopBagRecording();
+	rosbag::Bag *currentRecordingBag;
+
+	ros::Duration velLatchDuration; // The amount of time a previously receive velocity should kept publishing
+
   };
 
 } // end namespace tbd_podi_common
