@@ -6,9 +6,10 @@
 
 
 ## [0.2.0] - 2020-04-17 -->
-## TODOs
+<!-- ## TODOs
 
-## [Unreleased]
+## [Unreleased] -->
+## [1.1.0] - 2020-04-23
 #### Added
 - `tbd_podi_2dnav` that acts an interface for ROS Navigation packages. Migrated in old settings from other podi repositories.
 - `maps` folder and multiple maps. Including `sim_NSH_04_2020.yaml` that describe the gazebo environment.
