@@ -2,9 +2,9 @@
 	<arg name="robot_name" default="podi" />
 	<arg name="launch_rviz" default="false" />
 	<arg name="rviz_config_path" default="$(find tbd_podi_common)/rviz/podi_default.rviz" />
-	<arg name="rosariaPort" default="/dev/ttyUSB0"/>
-	<arg name="rosariaPublishLasers" default="false"/>
-	<arg name="joystickDevicePath" default="/dev/input/js0"/>
+	<arg name="rosaria_port" default="/dev/ttyUSB0"/>
+	<arg name="rosaria_publish_lasers" default="false"/>
+	<arg name="joystick_device_path" default="/dev/input/js0"/>
 	<arg name="rosbag_recording_base_path" default="$(find tbd_podi_common)/bagfiles/"/>
 	<arg name="playback_rosbag_path" default="$(find tbd_podi_common)/bagfiles/"/>
 	<arg name="xacro" default="$(find tbd_podi_description)/urdf/podi.urdf.xacro"/>
@@ -15,13 +15,13 @@
 
 	<!-- Launch ROSARIA, which communicates with the P3DX Base -->
 	<node pkg = "rosaria" type = "RosAria" name = "RosAria" output="screen" unless="$(arg sim)">
-		<param name="port" value="$(arg rosariaPort)" type="string"/>
-		<param name="publish_aria_lasers" value="$(arg rosariaPublishLasers)" type="bool"/>
+		<param name="port" value="$(arg rosaria_port)" type="string"/>
+		<param name="publish_aria_lasers" value="$(arg rosaria_publish_lasers)" type="bool"/>
 	</node>
 
 	<!-- Launch the joystick node -->
 	<node pkg="joy" type="joy_node" name="joystick_node" respawn="true" if="$(arg use_joy)">
-		<param name="dev" value="$(arg joystickDevicePath)" type="string"/>
+		<param name="dev" value="$(arg joystick_device_path)" type="string"/>
 	</node>
 
 	<!-- Launch the node that will send velocity commands to actuators -->

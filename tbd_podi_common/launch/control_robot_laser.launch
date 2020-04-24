@@ -1,8 +1,8 @@
 <launch>
 	<arg name="robot_name"						default="podi" />
-	<arg name="rosariaPort" 					default="/dev/ttyUSB0"/>
-	<arg name="rosariaPublishLasers" 			default="true"/>
-	<arg name="joystickDevicePath" 				default="/dev/input/js0"/>
+	<arg name="rosaria_port" 					default="/dev/ttyUSB0"/>
+	<arg name="rosaria_publish_lasers" 			default="true"/>
+	<arg name="joystick_device_path" 			default="/dev/input/js0"/>
 	<arg name="rosbag_recording_base_path" 		default="$(find tbd_podi_common)/bagfiles/"/>
 	<arg name="playback_rosbag_path" 			default=""/>
 	<arg name="xacro" 							default="$(find tbd_podi_description)/urdf/podi.urdf.xacro"/>  	
@@ -15,9 +15,9 @@
 	<arg name="trans_laser_topic_name"			default="$(arg robot_name)/laser" />
 
 	<include file="$(find tbd_podi_common)/launch/control_robot_base.launch">
-		<arg name="rosariaPort" 				value="$(arg rosariaPort)"/>
-		<arg name="rosariaPublishLasers" 		value="$(arg rosariaPublishLasers)"/>
-		<arg name="joystickDevicePath" 			value="$(arg joystickDevicePath)"/>
+		<arg name="rosaria_port" 				value="$(arg rosaria_port)"/>
+		<arg name="rosaria_publish_lasers" 		value="$(arg rosaria_publish_lasers)"/>
+		<arg name="joystick_device_path" 		value="$(arg joystick_device_path)"/>
 		<arg name="rosbag_recording_base_path" 	value="$(arg rosbag_recording_base_path)"/>
 		<arg name="playback_rosbag_path" 		value="$(arg playback_rosbag_path)"/>
 		<arg name="xacro"						value="$(arg xacro)"/>
