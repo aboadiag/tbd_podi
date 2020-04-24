@@ -5,11 +5,8 @@
 	<arg name="rosariaPort" default="/dev/ttyUSB0"/>
 	<arg name="rosariaPublishLasers" default="false"/>
 	<arg name="joystickDevicePath" default="/dev/input/js0"/>
-	<arg name="rosbagRecordingBasePath" default="$(find tbd_podi_common)/bagfiles/"/>
-	<arg name="playbackRosbagPath" default="$(find tbd_podi_common)/bagfiles/"/>
-	<arg name="targetX" default="0.0"/>
-	<arg name="targetY" default="0.0"/>
-	<arg name="targetTh" default="0.0"/>
+	<arg name="rosbag_recording_base_path" default="$(find tbd_podi_common)/bagfiles/"/>
+	<arg name="playback_rosbag_path" default="$(find tbd_podi_common)/bagfiles/"/>
 	<arg name="xacro" default="$(find tbd_podi_description)/urdf/podi.urdf.xacro"/>
 	<arg name="joint_publish_list" default="[/podi/handle_state]"/>
 	<arg name="sim" default="false"/>
@@ -29,13 +26,10 @@
 
 	<!-- Launch the node that will send velocity commands to actuators -->
 	<node pkg="tbd_podi_common" type="control_robot" name="podi_common_control_robot" output="screen">
-		<param name="rosbagRecordingBasePath" value="$(arg rosbagRecordingBasePath)" type="string"/>
-		<param name="playbackRosbagPath" value="$(arg playbackRosbagPath)"/>
-		<param name="targetX" value="$(arg targetX)"/>
-		<param name="targetY" value="$(arg targetY)"/>
-		<param name="targetTh" value="$(arg targetTh)"/>
+		<param name="rosbag_recording_base_path" value="$(arg rosbag_recording_base_path)" type="string"/>
+		<param name="playback_rosbag_path" value="$(arg playback_rosbag_path)"/>
 		<param name="control_loop_rate" value="100.0"/>
-		<param name="proportionalGainFactor" value="0.90"/>
+		<param name="proportional_gain_factor" value="0.90"/>
 		<remap from="output_cmd_vel" to="$(arg motor_topic_name)"/>
 	</node>
 
@@ -50,7 +44,7 @@
 
 	<!-- Start the P3DX's URDF broadcaster, so the appropriate TF tree is published -->
 	<param name="$(arg robot_name)/robot_description" command="$(find xacro)/xacro $(arg xacro)" />
-	
+
 	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
 		<rosparam param="source_list" subst_value="True">$(arg joint_publish_list)</rosparam>
 		<remap from="robot_description" to="$(arg robot_name)/robot_description" />

@@ -22,18 +22,9 @@ public:
 LaserScanFrameTransform::LaserScanFrameTransform()
 {
   // get the parameters and set to default if not given
-  if (!nh.getParam("output_frame_id", newLaserFrame))
-  {
-    newLaserFrame = "";
-  }
-  if (!nh.getParam("min_angle", minAngle))
-  {
-    minAngle = -1.0 * M_PI * 5.0 / 8.0;
-  }
-  if (!nh.getParam("max_angle", maxAngle))
-  {
-    maxAngle = M_PI * 5.0 / 8.0;
-  }
+  nh.param<std::string>("output_frame_id", newLaserFrame, "");
+  nh.param<double>("min_angle", minAngle, -1.0 * M_PI * 5.0 / 8.0);
+  nh.param<double>("min_angle", maxAngle, M_PI * 5.0 / 8.0);
 
   laserTopicInput = nh.subscribe("laser", 1000, &LaserScanFrameTransform::laserMessageReceived, this);
   laserTopicOutput = nh.advertise<sensor_msgs::LaserScan>("transformed_laser", 1000);
