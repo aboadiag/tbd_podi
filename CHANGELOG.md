@@ -7,8 +7,12 @@
 
 ## [0.2.0] - 2020-04-17 -->
 <!-- ## TODOs
-
 ## [Unreleased] -->
+## [Unreleased]
+#### Added 
+- Ability to set initial pose for ROS Navigation.
+
+
 ## [1.1.0] - 2020-04-23
 #### Added
 - `tbd_podi_2dnav` that acts an interface for ROS Navigation packages. Migrated in old settings from other podi repositories.
