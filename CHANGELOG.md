@@ -15,6 +15,9 @@
 #### Changed
 - Updated the Camera and LiDAR's Gazebo numbers to better match what the real system has. 
 
+## [1.1.1] - 2020-04-30
+#### Changed
+- Incorrect topic publishing name for front camera changed from `podi/front_camera/podi/image_raw` to `podi/front_camera/image_raw`
 
 ## [1.1.0] - 2020-04-23
 #### Added
