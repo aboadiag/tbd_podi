@@ -35,4 +35,6 @@ jobs:
         run: " rosdep update && rosdep install --from-paths ."
       - name: Catkin Build
         run: "cd .. && catkin_make_isolated"
+        if: ${{ always() }}
+
       
