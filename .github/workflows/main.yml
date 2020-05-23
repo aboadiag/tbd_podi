@@ -31,7 +31,8 @@ jobs:
       - name: Create Workspace
         run: "mkdir -p ros_ws/src && cd ros_ws/src"  
       - uses: actions/checkout@v2
-      - run: "cd .."
+      - name: Install Dependencies
+        run: "rosdep install --from-paths ."
       - name: Catkin Build
-        run: "catkin_make_isolated"
+        run: "cd .. && catkin_make_isolated"
       
