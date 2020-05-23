@@ -32,7 +32,7 @@ jobs:
         run: "mkdir -p ros_ws/src && cd ros_ws/src"  
       - uses: actions/checkout@v2
       - name: Install Dependencies
-        run: " rosdep update && rosdep install --from-paths ."
+        run: "cd .. & rosdep update && rosdep install --from-paths src --ignore-src"
       - name: Catkin Build
         run: "cd .. && catkin_make_isolated"
         if: ${{ always() }}
