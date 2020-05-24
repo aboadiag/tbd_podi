@@ -51,7 +51,6 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <depend>navigation</depend>
-  <depend>navigation_msgs</depend>
   <build_depend>tbd_podi_common</build_depend>
   <exec_depend>tbd_podi_common</exec_depend>
 
