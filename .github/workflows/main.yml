@@ -27,14 +27,18 @@ jobs:
         uses: ros-tooling/setup-ros@0.0.20
         with: 
           required-ros-distributions: ${{ matrix.ros_distributions }}
-      - run: "source /opt/ros/${{ matrix.ros_distributions }}/setup.bash && rosnode --help"
       - name: Create Workspace
-        run: "mkdir -p ros_ws/src && cd ros_ws/src"  
+        run: "mkdir -p ros_ws/src"  
       - uses: actions/checkout@v2
+        with:
+          path: ros_ws/src
       - name: Install Dependencies
-        run: "cd .. & rosdep update && rosdep install --from-paths src --ignore-src"
+        run: "rosdep update && rosdep install --from-paths ros_ws/src --ignore-src"
       - name: Catkin Build
-        run: "cd .. && catkin_make_isolated"
+        run: |
+          source /opt/ros/${{matrix.ros_distributions}}/setup.bash
+          cd ros_ws
+          catkin_make_isolated
         if: ${{ always() }}
 
       
