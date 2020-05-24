@@ -14,6 +14,7 @@
 
 #### Changed
 - Updated the Camera and LiDAR's Gazebo numbers to better match what the real system has. 
+- Cleaned up `package.xml` to enable CI.
 
 ## [1.1.1] - 2020-04-30
 #### Changed
