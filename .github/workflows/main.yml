@@ -31,14 +31,21 @@ jobs:
         run: "mkdir -p ros_ws/src"  
       - uses: actions/checkout@v2
         with:
-          path: ros_ws/src
+          path: ros_ws/src/tbd_podi
+      - uses: actions/checkout@v2
+        with:
+          repository: cmu-tbd/tbd_face_screen
+          token: ${{secrets.ZHI_PAT_FOR_CI}}
+          path: ros_ws/src/tbd_face_screen
       - name: Install Dependencies
-        run: "rosdep update && rosdep install --from-paths ros_ws/src --ignore-src"
+        run: |
+          source /opt/ros/${{matrix.ros_distributions}}/setup.bash
+          rosdep update
+          rosdep install -i --from-paths ros_ws/src"
       - name: Catkin Build
         run: |
           source /opt/ros/${{matrix.ros_distributions}}/setup.bash
           cd ros_ws
           catkin_make_isolated
-        if: ${{ always() }}
 
       
