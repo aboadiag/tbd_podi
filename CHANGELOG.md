@@ -11,6 +11,7 @@
 ## [1.1.2] - 2020-05-23
 #### Added 
 - Ability to set initial pose for ROS Navigation.
+- Continuous Integration using Github Action. Check for catkin build errors.
 
 #### Changed
 - Updated the Camera and LiDAR's Gazebo numbers to better match what the real system has. 
