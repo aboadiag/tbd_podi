@@ -51,12 +51,12 @@
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>rospy</build_depend>
   <build_depend>tbd_screen_face</build_depend>
-  <build_depend>tbd_podi_face_msgs</build_depend>
+  <build_depend>tbd_podi_msgs</build_depend>
   <build_export_depend>rospy</build_export_depend>
   <build_export_depend>tbd_screen_face</build_export_depend>
   <exec_depend>rospy</exec_depend>
   <exec_depend>tbd_screen_face</exec_depend>
-  <exec_depend>tbd_podi_face_msgs</exec_depend>
+  <exec_depend>tbd_podi_msgs</exec_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

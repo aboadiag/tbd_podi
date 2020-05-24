@@ -7,8 +7,15 @@
 
 ## [0.2.0] - 2020-04-17 -->
 <!-- ## TODOs
-
 ## [Unreleased] -->
+## [1.1.2] - 2020-05-23
+#### Added 
+- Ability to set initial pose for ROS Navigation.
+
+#### Changed
+- Updated the Camera and LiDAR's Gazebo numbers to better match what the real system has. 
+- Cleaned up `package.xml` to enable CI.
+
 ## [1.1.1] - 2020-04-30
 #### Changed
 - Incorrect topic publishing name for front camera changed from `podi/front_camera/podi/image_raw` to `podi/front_camera/image_raw`
