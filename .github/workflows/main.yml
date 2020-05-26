@@ -1,0 +1,51 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Building
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master, zhi-github-action ]
+  pull_request:
+    branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    strategy:
+      matrix:
+        ros_distributions: 
+          - melodic
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Setup ROS
+        uses: ros-tooling/setup-ros@0.0.20
+        with: 
+          required-ros-distributions: ${{ matrix.ros_distributions }}
+      - name: Create Workspace
+        run: "mkdir -p ros_ws/src"  
+      - uses: actions/checkout@v2
+        with:
+          path: ros_ws/src/tbd_podi
+      - uses: actions/checkout@v2
+        with:
+          repository: cmu-tbd/tbd_screen_face
+          token: ${{secrets.ZHI_PAT_FOR_CI}}
+          path: ros_ws/src/tbd_screen_face
+      - name: Install Dependencies
+        run: |
+          source /opt/ros/${{matrix.ros_distributions}}/setup.bash
+          rosdep update
+          rosdep install -i --from-paths ros_ws/src
+      - name: Catkin Build
+        run: |
+          source /opt/ros/${{matrix.ros_distributions}}/setup.bash
+          cd ros_ws
+          catkin_make_isolated
+
+      
