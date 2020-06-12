@@ -40,7 +40,7 @@
       <!-- <visualize>true</visualize> -->
       <update_rate>25</update_rate>
       <ray>
-        <scan><visualize>true<<visualize>true</visualize>/visualize>
+        <scan>
           <horizontal>
             <samples>540</samples>
             <resolution>0.5</resolution>
