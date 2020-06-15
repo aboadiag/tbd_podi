@@ -8,6 +8,10 @@
 ## [0.2.0] - 2020-04-17 -->
 <!-- ## TODOs
 ## [Unreleased] -->
+## [1.1.3] - 2020-06-12
+#### Changed
+- Changed podi laserscanner's type from `gpu_ray` to `ray`
+
 ## [1.1.2] - 2020-05-23
 #### Added 
 - Ability to set initial pose for ROS Navigation.

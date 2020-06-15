@@ -35,9 +35,9 @@
   </gazebo>
 
   <gazebo reference="laser_scanner">
-    <sensor type="gpu_ray" name="lms100x">
+    <sensor type="ray" name="lms100x">
       <pose>0 0 0 0 0 0</pose>
-      <!-- <visualize>false</visualize> -->
+      <!-- <visualize>true</visualize> -->
       <update_rate>25</update_rate>
       <ray>
         <scan>
@@ -59,7 +59,7 @@
           <stddev>0.01</stddev>
         </noise>
       </ray>
-      <plugin name="${robotname}_front_lidar_controller" filename="libgazebo_ros_gpu_laser.so">
+      <plugin name="${robotname}_front_lidar_controller" filename="libgazebo_ros_laser.so">
         <topicName>laser</topicName>
         <frameName>laser_scanner</frameName>
         <robotNamespace>${robotname}</robotNamespace>
