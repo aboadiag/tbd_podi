@@ -9,6 +9,11 @@
 <!-- ## TODOs
 ## [Unreleased] -->
 
+## [1.1.5] - 2020-08-17
+- **[Changed]** Tweaked the inertia models of podi to try improve odom readings.
+- **[Added]** Modified Azure Kinect URDF.
+- **[Changed]** Camera of Podi is now an Azure Kinect. Gazebo will now publish color, depth, and point clound image. 
+
 ## [1.1.4] - 2020-06-23
 #### Changed
 - Remove `navigation` from `package.xml`
