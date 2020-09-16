@@ -9,6 +9,12 @@
 <!-- ## TODOs
 ## [Unreleased] -->
 
+## [1.3.0] - 2020-09-15
+- **[Changed]** Change Camera from AzureKinect to Zed2
+- **[Changed]** Change namespace to be more consistent
+- **[Changed]** Improved `computer_state_node`
+- **[Added]** ability to set whether the handle to be full rotation mode or fixed.
+
 ## [1.2.0] - 2020-09-08
 - **[Added]** Merged in simulation gazebo package to simplify dependencies.
 - **[Added]** VCS repo code to build the system.
