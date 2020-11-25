@@ -12,6 +12,7 @@ ControlRobot::ControlRobot() : private_nh("~")
     private_nh.param("control_loop_rate", controlLoopHz, 100.0);
     private_nh.param("proportional_gain_factor", proportionalGainFactor, 0.90);
     private_nh.param("vel_latch_duration", velLatchDurationDouble, 0.25);
+    private_nh.param("enabling_switch", enablingSwitchEnabled_, true);
     if (!private_nh.getParam("joystick_type", joystickType_))
     {
         joystickType_ = "logitech-dual-action";
@@ -241,24 +242,33 @@ void ControlRobot::spin()
             if (!emergencyStop)
             {
                 emergencyStopLock.unlock();
-                if (wasVelPublished)
-                {
-                    geometry_msgs::Twist spdToPublish;
-                    // Combine the multiple velocities together
-                    // TODO: Explore in future the ability to assign weights
-                    spdToPublish.linear.x = lastJoySpd.linear.x + lastPlaybackSpd.linear.x + lastNavigationSpd.linear.x;
-                    spdToPublish.angular.z = lastJoySpd.angular.z + lastPlaybackSpd.angular.z + lastNavigationSpd.angular.z;
-                    lastPublishedSpd = spdToPublish;
-                    lastVelPublishTime = ros::Time::now();
-                    ControlRobot::publishVelocity(spdToPublish);
-                }
-                else
-                {
-                    if (ros::Time::now() - lastVelPublishTime < velLatchDuration)
+                // check enabling switch
+                std::unique_lock<std::mutex> enablingswitchLock(enablingSwitchMutex_);
+                if (!enablingSwitchEnabled_ || enablingSwitchState_){
+                    enablingswitchLock.unlock();
+                    if (wasVelPublished)
                     {
-                        ControlRobot::publishVelocity(lastPublishedSpd);
+                        geometry_msgs::Twist spdToPublish;
+                        // Combine the multiple velocities together
+                        // TODO: Explore in future the ability to assign weights
+                        spdToPublish.linear.x = lastJoySpd.linear.x + lastPlaybackSpd.linear.x + lastNavigationSpd.linear.x;
+                        spdToPublish.angular.z = lastJoySpd.angular.z + lastPlaybackSpd.angular.z + lastNavigationSpd.angular.z;
+                        lastPublishedSpd = spdToPublish;
+                        lastVelPublishTime = ros::Time::now();
+                        ControlRobot::publishVelocity(spdToPublish);
                     }
+                    else
+                    {
+                        if (ros::Time::now() - lastVelPublishTime < velLatchDuration)
+                        {
+                            ControlRobot::publishVelocity(lastPublishedSpd);
+                        }
+                    }
+                    continue;
                 }
+                // publish empty velocity
+                geometry_msgs::Twist spd; // default is a zero twist
+                ControlRobot::publishVelocity(spd);
             }
         }
     }
@@ -381,8 +391,15 @@ void ControlRobot::joyCB(const sensor_msgs::Joy &msg)
         ang_axes = msg.axes[2];
     }
     
+    // check enabling switch
+    if (msg.buttons[7])
+    {
+
+    }
+
+    // if any of the estop buttons are pressed -- top LB & RB buttons
     if (msg.buttons[4] || msg.buttons[5])
-    { // if any of the estop buttons are pressed -- top LB & RB buttons
+    { 
         {
             std::lock_guard<std::mutex> emergencyStopLock(emergencyStopMutex);
             if (!emergencyStop)
@@ -395,9 +412,8 @@ void ControlRobot::joyCB(const sensor_msgs::Joy &msg)
         }
         return;
     }
-    else if (msg.buttons[7])
-    { // re-enable robot -- start button
-        ROS_INFO("Middle Start Button pressed!");
+    else if (msg.buttons[6]) //re-enable the robot start button
+    {
         {
             std::lock_guard<std::mutex> emergencyStopLock(emergencyStopMutex);
             if (emergencyStop)
@@ -409,6 +425,13 @@ void ControlRobot::joyCB(const sensor_msgs::Joy &msg)
             emergencyStop = false;
         }
         return;
+    }
+   
+
+    //update the enabling switch value
+    {
+        std::lock_guard<std::mutex> enablingSwitchLock(enablingSwitchMutex_);
+        enablingSwitchState_ = msg.buttons[7];
     }
 
     // if (msg.buttons[6]) { // back button -- play a beep
