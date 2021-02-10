@@ -8,6 +8,11 @@
 ## [0.2.0] - 2020-04-17 -->
 <!-- ## TODOs
 ## [Unreleased] -->
+
+## [Unreleased]
+- **[Changed]** Fix the simulator map being the wrong map.
+- **[Changed]** Controller will now publish [0,0] movement if there is no incoming movement signals.
+
 ## [1.5.0]
 - **[Added]** Added enabling switch to Podi. When true, the button must be hold down to move.
 - **[Added]** 3rd floor hallway map in NSH.
