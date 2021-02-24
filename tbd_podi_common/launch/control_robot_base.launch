@@ -13,6 +13,7 @@
 	<arg name="use_joy" default="true" />
 	<arg name="enabling_switch" default="true" />
 	<arg name="motor_topic_name" default="RosAria/cmd_vel" />
+	<arg name="nav_topic_name" default="cmd_vel" />
 
 	<!-- Launch ROSARIA, which communicates with the P3DX Base -->
 	<node pkg = "rosaria" type = "RosAria" name = "RosAria" output="screen" unless="$(arg sim)">
@@ -37,6 +38,7 @@
 		<param name="proportional_gain_factor" value="0.90"/>
 		<param name="enabling_switch" value="$(arg enabling_switch)"/>
 		<remap from="output_cmd_vel" to="$(arg motor_topic_name)"/>
+		<remap from="cmd_vel" to="$(arg nav_topic_name)"/>
 	</node>
 
 

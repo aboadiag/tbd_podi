@@ -1,10 +1,11 @@
 <launch>
 
+    <arg name="namespace"           default="podi" />
     <arg name="odom_frame_id"       default="podi_odom" />
     <arg name="base_frame_id"       default="podi_base_link" />
     <arg name="robot_command_topic" default="cmd_vel" />
-    <arg name="robot_laser_topic"   default="podi/laser" />
-    <arg name="robot_odom_topic"    default="podi/odom" />
+    <arg name="robot_laser_topic"   default="laser" />
+    <arg name="robot_odom_topic"    default="odom" />
     <arg name="map_path"            default="$(find tbd_podi_2dnav)/maps/sim-2020-11-nsh-3rd-entryway.yaml" />
     <arg name="initial_pose_x"      default="0" />
     <arg name="initial_pose_y"      default="0" />
@@ -68,7 +69,7 @@
         <!-- Noise in odometry is translation estimate from the rotational component of the robot is motion-->
         <param name="odom_alpha4" value="0.005"/>
 
-        <remap from="/scan" to="$(arg robot_laser_topic)" />
+        <remap from="scan" to="$(arg robot_laser_topic)" />
         <param name="odom_frame_id" value="$(arg odom_frame_id)" />
         <param name="base_frame_id" value="$(arg base_frame_id)" />
     </node>

@@ -15,7 +15,7 @@
 	<arg name="motor_topic_name" 				default="RosAria/cmd_vel" />
 	<arg name="incoming_laser_topic_name"		default="RosAria/lms1xx_1_laserscan" />
 	<arg name="trans_laser_topic_name"			default="$(arg robot_name)/laser" />
-
+	<arg name="nav_topic_name" 					default="cmd_vel" />
 
 	<include file="$(find tbd_podi_common)/launch/control_robot_laser.launch">
 		<arg name="rosaria_port" 				value="$(arg rosaria_port)"/>
@@ -32,7 +32,7 @@
 		<arg name="incoming_laser_topic_name"	value="$(arg incoming_laser_topic_name)" />
 		<arg name="trans_laser_topic_name"		value="$(arg trans_laser_topic_name)" />
 		<arg name="enabling_switch"				value="enabling_switch" />
-
+		<arg name="nav_topic_name" 				value="$(arg nav_topic_name)" />
 	</include>
 
 	<include file="$(find zed_wrapper)/launch/zed2.launch">
