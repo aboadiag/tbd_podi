@@ -15,6 +15,7 @@
 	<arg name="incoming_laser_topic_name"		default="RosAria/lms1xx_1_laserscan" />
 	<arg name="trans_laser_topic_name"			default="$(arg robot_name)/laser" />
 	<arg name="nav_topic_name" 					default="cmd_vel" />
+	<arg name="output" 							default="screen" />
 
 	<include file="$(find tbd_podi_common)/launch/control_robot_base.launch">
 		<arg name="robot_name" 					value="$(arg robot_name)"/>
@@ -34,7 +35,7 @@
 	</include>
 
 	<!-- Launch the nodes that crop its readings -->
-  	<node pkg="tbd_podi_common" type="laser_scan_frame_transform" name="podi_laser_scan_frame_transform" output="screen">
+  	<node pkg="tbd_podi_common" type="laser_scan_frame_transform" name="podi_laser_scan_frame_transform" output="$(arg output)">
 		<remap from="laser" 			to="$(arg incoming_laser_topic_name)" />
 		<remap from="transformed_laser" to="$(arg trans_laser_topic_name)" />
 	</node>

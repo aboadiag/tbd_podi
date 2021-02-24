@@ -1,0 +1,12 @@
+<launch>
+    <arg name="output"  default="screen" />
+    <arg name="bag_path" />
+
+    <param name="use_sim_time" value="true" />
+    <node pkg="rosbag" type="play" name="player" output="$(arg output)" args=" $(arg bag_path)" /> 
+    <node pkg="gmapping" type="slam_gmapping" name="mapping" output="$(arg output)">
+        <remap from="scan" to="/podi/laser" />
+        <param name="base_frame" value="podi_base_link" />
+        <param name="odom_frame" value="podi_odom" />
+    </node> 
+</launch> 
