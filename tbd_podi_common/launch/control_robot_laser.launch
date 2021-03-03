@@ -18,6 +18,7 @@
 	<arg name="output" 							default="screen" />
 
 	<include file="$(find tbd_podi_common)/launch/control_robot_base.launch">
+		<arg name="output" 						value="$(arg output)" />
 		<arg name="robot_name" 					value="$(arg robot_name)"/>
 		<arg name="rosaria_port" 				value="$(arg rosaria_port)"/>
 		<arg name="rosaria_publish_lasers" 		value="$(arg rosaria_publish_lasers)"/>

@@ -1,11 +1,13 @@
 <launch>
-    <arg name="output" default="screen"/>
-    <arg name="topic_name" default="podi_face"/>
-    <arg name="sim" default="false"/>
+    <arg name="output"          default="screen"/>
+    <arg name="topic_name"      default="podi_face"/>
+    <arg name="sim"             default="false"/>
+    <arg name="display_local"   default="false"/>
 
     <include file="$(find tbd_screen_face)/launch/run.launch">
         <arg name="output" value="$(arg output)" />
         <arg name="topic_name" value="$(arg topic_name)" />
+        <arg name="display_local" value="$(arg display_local)" />
     </include>
 
 	<node name="endpoint_server" pkg="tbd_podi_face" type="faceResponseRelay.py" output="$(arg output)" unless="$(arg sim)"/>
