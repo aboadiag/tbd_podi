@@ -1,9 +1,11 @@
 <launch>
     <arg name="output"  default="screen" />
+    <arg name="sim"     default="false" />
     <arg name="bag_prefix" default="mapping" />
     <include file="$(find tbd_podi_common)/launch/control_robot_laser.launch">
         <arg name="output"  value="$(arg output)" />
+        <arg name="sim"     value="$(arg sim)" />
     </include>
 
-    <node pkg="rosbag" type="record" name="recoder" output="$(arg output)" args=" -o $(find tbd_podi_2dnav)/../../../$(arg bag_prefix) -a" /> 
+    <node pkg="rosbag" type="record" name="recoder" output="$(arg output)" args=" -o $(find tbd_podi_2dnav)/../../../$(arg bag_prefix) /tf /tf_static /podi/laser" /> 
 </launch> 

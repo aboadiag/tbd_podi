@@ -13,6 +13,7 @@
 - **[Changed]** Fix the simulator map being the wrong map.
 - **[Changed]** Change simulator's output topic name to match names from RosAria.
 - **[Changed]** Controller will now publish [0,0] movement if there is no incoming movement signals.
+- **[Added]** Map for simulated lab.
 
 ## [1.5.0]
 - **[Added]** Added enabling switch to Podi. When true, the button must be hold down to move.
