@@ -282,8 +282,6 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        map:
-          Value: true
         podi_back_sonar:
           Value: true
         podi_base_link:
@@ -338,6 +336,8 @@ Visualization Manager:
           Value: true
         podi_left_wheel:
           Value: true
+        podi_map:
+          Value: true
         podi_odom:
           Value: true
         podi_right_hubcap:
@@ -353,7 +353,7 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        map:
+        podi_map:
           podi_odom:
             podi_base_link:
               podi_back_sonar:
@@ -415,7 +415,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: map
+    Fixed Frame: podi_map
     Frame Rate: 30
   Name: root
   Tools:
@@ -478,4 +478,4 @@ Window Geometry:
     collapsed: true
   Width: 1848
   X: 397
-  Y: 429
+  Y: 355
