@@ -11,6 +11,7 @@
 
 ## [Unreleased]
 - **[Changed]** Fix the simulator map being the wrong map.
+- **[Changed]** Change simulator's output topic name to match names from RosAria.
 - **[Changed]** Controller will now publish [0,0] movement if there is no incoming movement signals.
 
 ## [1.5.0]
