@@ -46,7 +46,7 @@
 		</node>
 
 		<!-- Start the P3DX's URDF broadcaster, so the appropriate TF tree is published -->
-		<param name="$(arg robot_name)/robot_description" 
+		<param name="robot_description" 
 			command="$(find xacro)/xacro $(arg xacro)
 					robot_name:=$(arg robot_name)" 
 		/>
