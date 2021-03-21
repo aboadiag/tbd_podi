@@ -92,6 +92,7 @@
             <rosparam file="$(find tbd_podi_2dnav)/config/base_local_planner_params.yaml" command="load" />
             <remap from="cmd_vel" to="$(arg robot_command_topic)" />
             <remap from="odom" to="$(arg robot_odom_topic)" />
+            <remap from="laser" to="$(arg robot_laser_topic)" />
         </node>
     </group>
 
