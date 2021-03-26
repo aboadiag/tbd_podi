@@ -9,13 +9,14 @@
 <!-- ## TODOs
 ## [Unreleased] -->
 
-## [Unreleased]
+## [1.6.0]
+- **[Added]** Map for simulated lab.
 - **[Changed]** Fix the simulator map being the wrong map.
 - **[Changed]** Change simulator's output topic name to match names from RosAria.
 - **[Changed]** Controller will now publish [0,0] movement if there is no incoming movement signals.
-- **[Added]** Map for simulated lab.
-- **[Fixed]** Podi's description was set incorrectly.
 - **[Changed]** simplify map building in simulator.
+- **[Changed]** Increase Podi's minimum/maximum rotation speed
+- **[Fixed]** Podi's description was set incorrectly.
 
 ## [1.5.0]
 - **[Added]** Added enabling switch to Podi. When true, the button must be hold down to move.
