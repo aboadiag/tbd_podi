@@ -9,7 +9,7 @@
 <!-- ## TODOs
 ## [Unreleased] -->
 
-## [1.6.0]
+## [1.6.0] - 2021-03-25
 - **[Added]** Map for simulated lab.
 - **[Changed]** Fix the simulator map being the wrong map.
 - **[Changed]** Change simulator's output topic name to match names from RosAria.
