@@ -9,6 +9,9 @@
 <!-- ## TODOs
 ## [Unreleased] -->
 
+## [Unreleased]
+- **[Changed]** Cleanup the code that handled joystick commands and also use enum for easy changing in the future.
+
 ## [1.6.0] - 2021-03-25
 - **[Added]** Map for simulated lab.
 - **[Changed]** Fix the simulator map being the wrong map.

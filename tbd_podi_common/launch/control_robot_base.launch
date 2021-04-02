@@ -6,7 +6,7 @@
 	<arg name="rosaria_publish_lasers" default="false"/>
 	<arg name="joystick_device_path" default="/dev/input/js0"/>
 	<arg name="rosbag_recording_base_path" default="$(find tbd_podi_common)/bagfiles/"/>
-	<arg name="playback_rosbag_path" default="$(find tbd_podi_common)/bagfiles/"/>
+	<arg name="playback_rosbag_path" default=""/>
 	<arg name="xacro" default="$(find tbd_podi_description)/urdf/podi.urdf.xacro"/>
 	<arg name="joint_publish_list" default="[/podi/handle_state]"/>
 	<arg name="sim" default="false"/>
