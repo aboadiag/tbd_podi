@@ -19,6 +19,7 @@
 #include "ros/ros.h"
 #include "std_msgs/Int16.h"
 #include "std_msgs/Empty.h"
+#include "std_srvs/Empty.h"
 #include "geometry_msgs/Twist.h"
 #include "geometry_msgs/TwistStamped.h"
 #include "geometry_msgs/PoseStamped.h"
@@ -62,6 +63,10 @@ namespace tbd_podi_common
 		ros::Publisher cmd_vel_pub;
 		ros::Subscriber joy_sub;
 		ros::Subscriber ros_navigation_cmd_vel_sub;
+
+		// service clients
+		ros::ServiceClient enableMotorClient;
+		ros::ServiceClient disableMotorClient;
 
 		// Recording / Playing Back Rosbags
 		std::string rosbagTopicName;

@@ -31,11 +31,16 @@ namespace tbd_podi_common
         ros_navigation_cmd_vel_sub = n.subscribe("cmd_vel", 1, &ControlRobot::navigationCB, this);
         cmd_vel_pub = n.advertise<geometry_msgs::Twist>("output_cmd_vel", 1);
         joy_sub = n.subscribe("joy", 1, &ControlRobot::joyCB, this);
+        enableMotorClient = n.serviceClient<std_srvs::Empty>("enable_motors");
+        disableMotorClient = n.serviceClient<std_srvs::Empty>("disable_motors");
+
+        std_srvs::Empty srv;
+        disableMotorClient.call(srv);
 
         rosbagTopicName = "output_cmd_vel_stamped";
 
         // setup local variables
-        emergencyStop = false;
+        emergencyStop = true;
         recording = false;
         playingBack = false;
         newEmergencyStop = false;
@@ -119,12 +124,7 @@ namespace tbd_podi_common
                         lastPublishedSpd.angular.x = 0;
                         lastPublishedSpd.angular.y = 0;
                         lastPublishedSpd.angular.z = 0;
-                        ROS_INFO("EMERGENCY STOP BUTTON PRESSED!!!!");
                         continue;
-                    }
-                    else
-                    {
-                        ROS_INFO("Re-enabling robot.");
                     }
                 }
                 else
@@ -382,36 +382,32 @@ namespace tbd_podi_common
 
     void ControlRobot::joyCB(const sensor_msgs::Joy &msg)
     {
-        // check if estop button is pressed
-        if (msg.buttons[button_mapping::estop_button])
+        // check if the estop or the restart button is pressed 
+        if (msg.buttons[button_mapping::estop_button] || msg.buttons[button_mapping::restart_robot])
         {
+            std::lock_guard<std::mutex> emergencyStopLock(emergencyStopMutex);
+            if (msg.buttons[button_mapping::estop_button] && !emergencyStop)
             {
-                std::lock_guard<std::mutex> emergencyStopLock(emergencyStopMutex);
-                if (!emergencyStop)
-                {
-                    // signal that the value changed
-                    newEmergencyStop = true;
-                }
-                // update the value to be e-stopped
+                // signal that the value changed
+                newEmergencyStop = true;
                 emergencyStop = true;
+                // call motor disable
+                std_srvs::Empty srv;
+                disableMotorClient.call(srv);     
+                ROS_INFO("EMERGENCY STOP BUTTON PRESSED!!!");
             }
-            return;
-        }
-        else if (msg.buttons[button_mapping::restart_robot])
-        {
+            else if (msg.buttons[button_mapping::restart_robot] && emergencyStop)
             {
-                std::lock_guard<std::mutex> emergencyStopLock(emergencyStopMutex);
-                if (emergencyStop)
-                {
-                    // signal that the value changed
-                    newEmergencyStop = true;
-                }
-                // update the value to no longer on emergency stop
+                // signal that the value changed
+                newEmergencyStop = true;
                 emergencyStop = false;
+                // call motor disable
+                std_srvs::Empty srv;
+                enableMotorClient.call(srv);    
+                ROS_INFO("ROBOT MOTORS RE-ENABLED!!!"); 
             }
-            return;
         }
-
+        
         //update the enabling switch value
         {
             std::lock_guard<std::mutex> enablingSwitchLock(enablingSwitchMutex_);

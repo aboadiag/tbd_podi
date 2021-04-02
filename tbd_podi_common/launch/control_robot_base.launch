@@ -37,6 +37,8 @@
 			<param name="enabling_switch" value="$(arg enabling_switch)"/>
 			<remap from="output_cmd_vel" to="$(arg motor_topic_name)"/>
 			<remap from="cmd_vel" to="$(arg nav_topic_name)"/>
+			<remap from="enable_motors" to="/RosAria/enable_motors"/>
+			<remap from="disable_motors" to="/RosAria/disable_motors"/>
 		</node>
 
 		<!-- Launch the joystick node -->
