@@ -43,8 +43,8 @@
           <horizontal>
             <samples>540</samples>
             <resolution>0.5</resolution>
-            <min_angle>-2.35619</min_angle>
-            <max_angle>2.35619</max_angle>
+            <min_angle>-1.9634954</min_angle>
+            <max_angle>1.9634954</max_angle>
           </horizontal>
         </scan>
         <range>
@@ -59,7 +59,8 @@
         </noise>
       </ray>
       <plugin name="$(arg robot_name)_front_lidar_controller" filename="libgazebo_ros_laser.so">
-        <topicName>/RosAria/lms1xx_1_laserscan</topicName>
+        <robotNamespace>${robotname}</robotNamespace>
+        <topicName>laser</topicName>
         <frameName>$(arg robot_name)_laser_scanner</frameName>
       </plugin>
     </sensor>
