@@ -11,6 +11,7 @@
 
 ## [Unreleased]
 - **[Changed]** Cleanup the code that handled joystick commands and also use enum for easy changing in the future.
+- **[Changed]** Skipped local node that transform and cutoff laser reading and now relies on p3dx configuration to set the laser.
 - **[Added]** the software e-stop now always disable/enable the robot's motor as an additional level of safety. 
 
 ## [1.6.0] - 2021-03-25

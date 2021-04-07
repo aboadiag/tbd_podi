@@ -37,7 +37,8 @@
             <!--Number of filter updates required before resampling. -->
             <param name="resample_interval" value="2"/>
             <!--Number of filter updates required before resampling. -->
-            <param name="transform_tolerance" value="0.25" />
+            
+            <param name="transform_tolerance" value="0.2" />
 
             <!-- Set the initiali pose in the map -->
             <param name="initial_pose_x" value="$(arg initial_pose_x)" />
@@ -51,7 +52,7 @@
             <!--Initial pose covariance (yaw*yaw), used to initialize filter with Gaussian distribution. -->
             <param name="initial_cov_aa" value="0.02"/>
             <!--When set to true, AMCL will subscribe to the map topic rather than making a service call to receive its map. New in navigation XXXX-->
-            <param name="use_map_topic" value="false"/>
+            <param name="use_map_topic" value="true"/>
 
             <!--Laser model parameters-->
             <param name="laser_model_type" value="beam"/>
