@@ -59,8 +59,7 @@
         </noise>
       </ray>
       <plugin name="$(arg robot_name)_front_lidar_controller" filename="libgazebo_ros_laser.so">
-        <robotNamespace>${robotname}</robotNamespace>
-        <topicName>laser</topicName>
+        <topicName>${robotname}/laser</topicName>
         <frameName>$(arg robot_name)_laser_scanner</frameName>
       </plugin>
     </sensor>

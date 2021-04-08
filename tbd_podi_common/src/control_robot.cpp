@@ -13,6 +13,7 @@ namespace tbd_podi_common
         private_nh.param("proportional_gain_factor", proportionalGainFactor, 0.90);
         private_nh.param("vel_latch_duration", velLatchDurationDouble, 0.25);
         private_nh.param("enabling_switch", enablingSwitchEnabled_, true);
+        private_nh.param("sim", simOperation_, false);
         if (!private_nh.getParam("joystick_type", joystickType_))
         {
             joystickType_ = "logitech-dual-action";
@@ -40,7 +41,7 @@ namespace tbd_podi_common
         rosbagTopicName = "output_cmd_vel_stamped";
 
         // setup local variables
-        emergencyStop = true;
+        emergencyStop = !simOperation_;
         recording = false;
         playingBack = false;
         newEmergencyStop = false;

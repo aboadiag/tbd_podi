@@ -79,6 +79,9 @@ namespace tbd_podi_common
 
 		std::string joystickType_;
 
+		// whether it is simulator
+		bool simOperation_;
+
 		// Used for the functionality of the controlLoop
 		double controlLoopHz;
 

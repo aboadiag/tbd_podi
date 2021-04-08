@@ -37,6 +37,7 @@
 			<param name="control_loop_rate" value="100.0"/>
 			<param name="proportional_gain_factor" value="0.90"/>
 			<param name="enabling_switch" value="$(arg enabling_switch)"/>
+			<param name="sim" value="$(arg sim)"/>
 			<remap from="output_cmd_vel" to="$(arg motor_topic_name)"/>
 			<remap from="cmd_vel" to="$(arg nav_topic_name)"/>
 			<remap from="enable_motors" to="/RosAria/enable_motors"/>
