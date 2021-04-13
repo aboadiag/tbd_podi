@@ -1,0 +1,10 @@
+<class_libraries>
+  <library path="libTBDlayers">
+    <class type="tbd_costmap::HumanLayer"  base_class_type="costmap_2d::Layer">
+      <description>Listens to Humans and generate boundaries around it.</description>
+    </class>
+    <class type="tbd_costmap::InteractionSpaceLayer"  base_class_type="costmap_2d::Layer">
+      <description>Listens to InteractionSpaces and generate boundaries around them.</description>
+    </class>
+  </library>
+</class_libraries>

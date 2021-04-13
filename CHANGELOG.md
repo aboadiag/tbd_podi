@@ -8,11 +8,17 @@
 ## [0.2.0] - 2020-04-17 -->
 <!-- ## TODOs
 ## [Unreleased] -->
-
 ## [Unreleased]
+#### 2021-04-09
 - **[Changed]** Cleanup the code that handled joystick commands and also use enum for easy changing in the future.
 - **[Changed]** Skipped local node that transform and cutoff laser reading and now relies on p3dx configuration to set the laser.
 - **[Added]** the software e-stop now always disable/enable the robot's motor as an additional level of safety.
+#### 2021-04-12
+- **[Added]** A plugin layer map that listen to the `/humans` topic to locate detected humans and add them to the global navigation map.
+- **[Added]** A plugin layer map that listen to the `/interaction_space` topic to locate potential spatial groups and add them to the global navigaiton map. 
+- **[Changed]** Higher friction co-efficient in the wheels to better mirror real life situation
+- **[Changed]** Change Podi simulator odometry to use `world` instead, this is to better reflect real life situation
+- **[Changed]** Tuned the ros navigation configurations to intergrate new layers. 
 
 ## [1.6.0] - 2021-03-25
 - **[Added]** Map for simulated lab.

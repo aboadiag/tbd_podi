@@ -18,6 +18,6 @@ TrajectoryPlannerROS:
   gdist_scale: 0.8 # 0.8 # The weighting for how much the controller should attempt to reach its local goal, also controls speed, maximal possible value is 5.0
   occdist_scale: 0.01
 
-  dwa: false
-  use_dwa: false
+  dwa: true
+  use_dwa: true
   holonomic_robot: false #Determines whether velocity commands are generated for a holonomic or non-holonomic robot.

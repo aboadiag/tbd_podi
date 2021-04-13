@@ -10,6 +10,9 @@ project(tbd_podi_2dnav)
 find_package(catkin REQUIRED COMPONENTS
   move_base
   tbd_podi_common
+  tbd_ros_msgs
+  pluginlib
+  costmap_2d
 )
 
 ## System dependencies are found with CMake's conventions
@@ -102,8 +105,12 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES tbd_podi_2dnav
+  INCLUDE_DIRS include
+  LIBRARIES TBDlayers
+  CATKIN_DEPENDS
+    tbd_ros_msgs
+    pluginlib
+    costmap_2d
 #  CATKIN_DEPENDS move_base tbd_podi_common
 #  DEPENDS system_lib
 )
@@ -115,8 +122,19 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
+)
+
+
+add_library(TBDlayers
+  plugins/human_layer.cpp
+  plugins/interaction_space_layer.cpp
+)
+
+add_dependencies(TBDlayers ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(TBDlayers
+  ${catkin_LIBRARIES}
 )
 
 ## Declare a C++ library
@@ -190,6 +208,10 @@ include_directories(
 #   # myfile2
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
+
+install(FILES tbd_costmap_plugins.xml
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
 
 #############
 ## Testing ##

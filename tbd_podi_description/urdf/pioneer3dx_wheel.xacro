@@ -88,9 +88,9 @@
 
     <gazebo reference="${tf_suffix}_wheel">
       <material value="Gazebo/Black"/>
-      <elem key="mu1" value="0.5" />
-      <elem key="mu2" value="50.0" />
-      <elem key="kp" value="100000000.0" />
+      <elem key="mu1" value="200.0" />
+      <elem key="mu2" value="100.0" />
+      <elem key="kp" value="10000000.0" />
       <elem key="kd" value="1.0" />
     </gazebo>
 
