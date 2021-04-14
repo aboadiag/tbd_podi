@@ -18,6 +18,7 @@ namespace tbd_costmap
         ros::Subscriber spaceSub_;
         std::string topicName_;
         double keepTimeSec_;
+        bool ignoreTimeStamp_;
         ros::Time lastMsgTime_;
         std::vector<std::vector<geometry_msgs::Point>> latestPolygons_;
         std::vector<std::vector<geometry_msgs::Point>> previousPolygons_;

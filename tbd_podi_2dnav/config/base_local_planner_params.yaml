@@ -1,6 +1,6 @@
 TrajectoryPlannerROS:
   max_vel_x: 0.8 # The maximum forward velocity allowed for the base in meters/sec
-  min_vel_x: 0.03 # The minimum forward velocity allowed for the base in meters/sec.
+  min_vel_x: 0.05 # The minimum forward velocity allowed for the base in meters/sec.
   max_vel_theta: 1.2 #The maximum rotational velocity allowed for the base in radians/sec
   min_vel_theta: -1.2 #The minimum rotational velocity allowed for the base in radians/sec
   min_in_place_vel_theta: 0.1 # The minimum rotational velocity allowed for the base while performing in-place rotations in radians/sec
@@ -18,6 +18,6 @@ TrajectoryPlannerROS:
   gdist_scale: 0.8 # 0.8 # The weighting for how much the controller should attempt to reach its local goal, also controls speed, maximal possible value is 5.0
   occdist_scale: 0.01
 
-  dwa: true
-  use_dwa: true
+  dwa: false
+  use_dwa: false
   holonomic_robot: false #Determines whether velocity commands are generated for a holonomic or non-holonomic robot.

@@ -18,6 +18,7 @@ namespace tbd_costmap
         std::string topicName_;
         double inflation_;
         double keepTimeSec_;
+        bool ignoreTimeStamp_;
         ros::Time lastMsgTime_;
         std::vector<geometry_msgs::Point> latestPoints_;
         std::vector<geometry_msgs::Point> previousPoints_;

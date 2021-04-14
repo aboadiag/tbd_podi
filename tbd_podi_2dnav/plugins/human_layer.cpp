@@ -30,6 +30,7 @@ namespace tbd_costmap
         // get the properities
         nh.param("topic", topicName_, std::string("/humans"));
         nh.param("inflation", inflation_, 0.25);
+        nh.param("ignore_time_stamp", ignoreTimeStamp_, false);
         nh.param("observation_keep_time", keepTimeSec_, 1.0);
 
         // subscribe to the humans topic
@@ -77,7 +78,7 @@ namespace tbd_costmap
             }
         }
 
-        if ((lastMsgTime_ + ros::Duration(keepTimeSec_)) > ros::Time::now())
+        if ( ignoreTimeStamp_ || (lastMsgTime_ + ros::Duration(keepTimeSec_)) > ros::Time::now())
         {
             for (const auto &point : latestPoints_)
             {
@@ -116,8 +117,14 @@ namespace tbd_costmap
             try
             {
                 // look up a transformation
-                transform = tf_->lookupTransform("podi_map", msg.bodies[0].header.frame_id, msg.bodies[0].header.stamp);
-
+                if (ignoreTimeStamp_)
+                {
+                    transform = tf_->lookupTransform("podi_map", msg.bodies[0].header.frame_id, msg.bodies[0].header.stamp);
+                }
+                else
+                {
+                    transform = tf_->lookupTransform("podi_map", msg.bodies[0].header.frame_id, ros::Time(0));
+                }
                 // collect the data
                 latestPoints_.clear();
                 for (const auto &body : msg.bodies)
@@ -146,6 +153,10 @@ namespace tbd_costmap
             {
                 ROS_ERROR("Extrapolation: %s\n", ex.what());
             }
+        }
+        else
+        {
+            latestPoints_.clear();
         }
     }
 

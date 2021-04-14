@@ -29,6 +29,7 @@ namespace tbd_costmap
 
         // get the properities
         nh.param("topic", topicName_, std::string("/interaction_space"));
+        nh.param("ignore_time_stamp", ignoreTimeStamp_, false);
         nh.param("observation_keep_time", keepTimeSec_, 1.0);
 
         // subscribe to the humans topic
@@ -62,7 +63,7 @@ namespace tbd_costmap
         {
             registerPolygonList(previousPolygons_, costmap_2d::FREE_SPACE, min_x, min_y, max_x, max_y);
         }
-        if ((lastMsgTime_ + ros::Duration(keepTimeSec_)) > ros::Time::now())
+        if (ignoreTimeStamp_ || (lastMsgTime_ + ros::Duration(keepTimeSec_)) > ros::Time::now())
         {
             registerPolygonList(latestPolygons_, costmap_2d::LETHAL_OBSTACLE, min_x, min_y, max_x, max_y);
             previousPolygons_ = latestPolygons_;
@@ -96,8 +97,14 @@ namespace tbd_costmap
             try
             {
                 // look up a transformation
-                transform = tf_->lookupTransform("podi_map", msg.spaces[0].header.frame_id, msg.spaces[0].header.stamp);
-
+                if (ignoreTimeStamp_)
+                {
+                    transform = tf_->lookupTransform("podi_map", msg.spaces[0].header.frame_id, msg.spaces[0].header.stamp);
+                }
+                else
+                {
+                    transform = tf_->lookupTransform("podi_map", msg.spaces[0].header.frame_id, ros::Time(0));
+                }
                 // we have a list of polygons
                 std::vector<std::vector<geometry_msgs::Point>> polygonList;
 

@@ -2,10 +2,11 @@ obstacle_range: 3.0 #The maximum range in meters at which to insert obstacles in
 raytrace_range: 5.0 #The maximum range in meters at which to raytrace out obstacles from the map using sensor data. # maintain this value away from obstacle
 
 #The footprint of the robot specified in the robot_base_frame coordinate frame as a list in the format: [ [x1, y1], [x2, y2], ...., [xn, yn] ]. The footprint specification assumes the center point of the robot is at (0.0, 0.0)
-footprint: [[0.20, 0.2], [0.20,-0.2], [-0.25,-0.2], [-0.25,-0.075], [-0.45,-0.075], [-0.45,0.075], [-0.25,0.075], [-0.25,0.2]]
+# footprint: [[0.20, 0.2], [0.20,-0.2], [-0.25,-0.2], [-0.25,-0.075], [-0.45,-0.075], [-0.45,0.075], [-0.25,0.075], [-0.25,0.2]]
+footprint: [[0.20, 0.2], [0.20,-0.2], [-0.3,-0.2], [-0.3,0.2]]
 inflation_layer:
-  inflation_radius: 1 # m # Original is 0.55m
-  cost_scaling_factor: 20.0 #10.0
+  inflation_radius: 0.4 # m # Original is 0.55m
+  cost_scaling_factor: 10.0 #10.0
 
 
 
