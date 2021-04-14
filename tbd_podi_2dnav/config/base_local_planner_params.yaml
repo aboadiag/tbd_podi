@@ -1,9 +1,9 @@
 TrajectoryPlannerROS:
   max_vel_x: 0.8 # The maximum forward velocity allowed for the base in meters/sec
   min_vel_x: 0.05 # The minimum forward velocity allowed for the base in meters/sec.
-  max_vel_theta: 1.2 #The maximum rotational velocity allowed for the base in radians/sec
-  min_vel_theta: -1.2 #The minimum rotational velocity allowed for the base in radians/sec
-  min_in_place_vel_theta: 0.1 # The minimum rotational velocity allowed for the base while performing in-place rotations in radians/sec
+  max_vel_theta: 1.0 #The maximum rotational velocity allowed for the base in radians/sec
+  min_vel_theta: -1.0 #The minimum rotational velocity allowed for the base in radians/sec
+  min_in_place_vel_theta: 0.4 # default 0.4 # The minimum rotational velocity allowed for the base while performing in-place rotations in radians/sec
   escape_vel: 0.0 # -0.1 # m/s, the speed used for reversing when unstucking itself
 
   acc_lim_theta: 2.0 #The rotational acceleration limit of the robot in radians/sec^2
