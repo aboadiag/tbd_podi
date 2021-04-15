@@ -9,6 +9,9 @@
 <!-- ## TODOs
 ## [Unreleased] -->
 ## [Unreleased]
+#### 2021-04-15
+- **[Changed]** Decreased the rotation tolerance to 0.1 radian. 15 degrees (0.25 radian) is way too much.
+- **[Changed]** Interaction Space's cost is now lower, to prevent Podi from getting stuck.
 #### 2021-04-13
 - **[Added]** parameters for the human and interaction space layers to ignore time stamps.
 - **[Changed]** Made the Podi footprint smaller and tuned some ROS Nav variables.
