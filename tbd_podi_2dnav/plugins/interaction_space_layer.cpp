@@ -65,7 +65,7 @@ namespace tbd_costmap
         }
         if (ignoreTimeStamp_ || (lastMsgTime_ + ros::Duration(keepTimeSec_)) > ros::Time::now())
         {
-            registerPolygonList(latestPolygons_, costmap_2d::LETHAL_OBSTACLE, min_x, min_y, max_x, max_y);
+            registerPolygonList(latestPolygons_, (unsigned char) 200, min_x, min_y, max_x, max_y);
             previousPolygons_ = latestPolygons_;
         }
         else
