@@ -17,6 +17,7 @@ namespace tbd_costmap
     private:
         ros::Subscriber spaceSub_;
         std::string topicName_;
+        std::string operating_frame_id_;
         double keepTimeSec_;
         bool ignoreTimeStamp_;
         ros::Time lastMsgTime_;

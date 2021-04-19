@@ -26,11 +26,15 @@ namespace tbd_costmap
         InteractionSpaceLayer::matchSize();
         //enable the map
         enabled_ = true;
+        current_ = true;
 
         // get the properities
         nh.param("topic", topicName_, std::string("/interaction_space"));
         nh.param("ignore_time_stamp", ignoreTimeStamp_, false);
         nh.param("observation_keep_time", keepTimeSec_, 1.0);
+
+        // get information about the cost map
+        operating_frame_id_ = layered_costmap_->getGlobalFrameID();
 
         // subscribe to the humans topic
         spaceSub_ = n.subscribe(topicName_, 1, &InteractionSpaceLayer::InteractionSpaceCB, this);
@@ -42,9 +46,9 @@ namespace tbd_costmap
 
     void InteractionSpaceLayer::registerPolygonList(std::vector<std::vector<geometry_msgs::Point>> &polygonList, unsigned char cost, double *min_x, double *min_y, double *max_x, double *max_y)
     {
-        for(const auto &polygon : polygonList)
+        for (const auto &polygon : polygonList)
         {
-            for(const auto &point : polygon)
+            for (const auto &point : polygon)
             {
                 *min_x = std::min(point.x, *min_x);
                 *min_y = std::min(point.y, *min_y);
@@ -56,7 +60,7 @@ namespace tbd_costmap
     }
 
     void InteractionSpaceLayer::updateBounds(double robot_x, double robot_y, double robot_yaw, double *min_x, double *min_y,
-                                  double *max_x, double *max_y)
+                                             double *max_x, double *max_y)
     {
         // update the bounds and polygons
         if (previousPolygons_.size() > 0)
@@ -65,7 +69,7 @@ namespace tbd_costmap
         }
         if (ignoreTimeStamp_ || (lastMsgTime_ + ros::Duration(keepTimeSec_)) > ros::Time::now())
         {
-            registerPolygonList(latestPolygons_, (unsigned char) 200, min_x, min_y, max_x, max_y);
+            registerPolygonList(latestPolygons_, (unsigned char)225, min_x, min_y, max_x, max_y);
             previousPolygons_ = latestPolygons_;
         }
         else
@@ -99,11 +103,11 @@ namespace tbd_costmap
                 // look up a transformation
                 if (ignoreTimeStamp_)
                 {
-                    transform = tf_->lookupTransform("podi_map", msg.spaces[0].header.frame_id, msg.spaces[0].header.stamp);
+                    transform = tf_->lookupTransform(operating_frame_id_, msg.spaces[0].header.frame_id, msg.spaces[0].header.stamp);
                 }
                 else
                 {
-                    transform = tf_->lookupTransform("podi_map", msg.spaces[0].header.frame_id, ros::Time(0));
+                    transform = tf_->lookupTransform(operating_frame_id_, msg.spaces[0].header.frame_id, ros::Time(0));
                 }
                 // we have a list of polygons
                 std::vector<std::vector<geometry_msgs::Point>> polygonList;
@@ -120,16 +124,49 @@ namespace tbd_costmap
                     polygon.push_back(transformedCenter);
 
                     // base on the information, we make multiple polygons
-                    for(const auto &member: space.members)
+                    for (const auto &member : space.members)
                     {
                         geometry_msgs::Point transformedPoint;
                         tf2::doTransform(member, transformedPoint, transform);
 
-                        //TODO: implement a line algorithm here.
-
                         // for now, we use just the two points
                         polygon.push_back(transformedPoint);
                     }
+
+                    // if there is only two points, we enlarge the space
+                    if (polygon.size() == 3)
+                    {
+                        // create a thicker line
+                        auto lineX = polygon[1].x - polygon[2].x;
+                        auto lineY = polygon[1].y - polygon[2].y;
+                        auto length = lineX + lineY;
+                        lineX = lineX / length;
+                        lineY = lineY / length;
+                        // now we can create the line
+                        double width = 0.25;
+                        std::vector<geometry_msgs::Point> newPolygon;
+
+                        geometry_msgs::Point p1, p2, p3, p4;
+                        p1.x = polygon[1].x - lineY * width;
+                        p1.y = polygon[1].y + lineX * width;
+                        p2.x = polygon[1].x + lineY * width;
+                        p2.y = polygon[1].y - lineX * width;
+                        p3.x = polygon[2].x - lineY * width;
+                        p3.y = polygon[2].y + lineX * width;
+                        p4.x = polygon[2].x + lineY * width;
+                        p4.y = polygon[2].y - lineX * width;
+                        newPolygon.push_back(p1);
+                        newPolygon.push_back(p2);
+                        newPolygon.push_back(p3);
+                        newPolygon.push_back(p4);
+                        for (auto i = 0; i < newPolygon.size(); i++)
+                        {
+                            ROS_INFO("Points: %f %f", newPolygon[i].x, newPolygon[i].y);
+                        }
+                        polygon = newPolygon;
+                    }
+
+                    ROS_INFO("polygon size: %i", polygon.size());
                     // add to polygone
                     polygonList.push_back(polygon);
                 }

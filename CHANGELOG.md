@@ -9,6 +9,10 @@
 <!-- ## TODOs
 ## [Unreleased] -->
 ## [Unreleased]
+#### 2021-04-19
+- **[Added]** Added a `25`mm and distinguish between version
+- **[Changed]** Local planner can now take in plugins
+- **[Fixed]** human and itneraction layers can now pick the right frame to convert to.
 #### 2021-04-15
 - **[Changed]** Decreased the rotation tolerance to 0.1 radian. 15 degrees (0.25 radian) is way too much.
 - **[Changed]** Interaction Space's cost is now lower, to prevent Podi from getting stuck.

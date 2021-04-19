@@ -90,7 +90,10 @@
             <rosparam file="$(find tbd_podi_2dnav)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
             <rosparam file="$(find tbd_podi_2dnav)/config/local_costmap_params.yaml" command="load" />
             <rosparam file="$(find tbd_podi_2dnav)/config/global_costmap_params.yaml" command="load" />
+            <rosparam file="$(find tbd_podi_2dnav)/config/sbpl_global_params.yaml" command="load" />
             <rosparam file="$(find tbd_podi_2dnav)/config/base_local_planner_params.yaml" command="load" />
+            <param name="SBPLLatticePlanner/primitive_filename" value="$(find sbpl_lattice_planner)/matlab/mprim/pr2.mprim" />
+            <param name="base_global_planner" value="SBPLLatticePlanner" />
             <remap from="cmd_vel" to="$(arg robot_command_topic)" />
             <remap from="odom" to="$(arg robot_odom_topic)" />
             <remap from="laser" to="$(arg robot_laser_topic)" />

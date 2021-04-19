@@ -16,6 +16,7 @@ namespace tbd_costmap
     private:
         ros::Subscriber humansSub_;
         std::string topicName_;
+        std::string operating_frame_id_;
         double inflation_;
         double keepTimeSec_;
         bool ignoreTimeStamp_;

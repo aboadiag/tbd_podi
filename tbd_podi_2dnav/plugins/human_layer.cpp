@@ -26,12 +26,16 @@ namespace tbd_costmap
         HumanLayer::matchSize();
         //enable the map
         enabled_ = true;
+        current_ = true;
 
         // get the properities
         nh.param("topic", topicName_, std::string("/humans"));
         nh.param("inflation", inflation_, 0.25);
         nh.param("ignore_time_stamp", ignoreTimeStamp_, false);
         nh.param("observation_keep_time", keepTimeSec_, 1.0);
+        
+        // get information about the cost map
+        operating_frame_id_ = layered_costmap_->getGlobalFrameID();
 
         // subscribe to the humans topic
         humansSub_ = n.subscribe(topicName_, 1, &HumanLayer::HumansCB, this);
@@ -119,11 +123,11 @@ namespace tbd_costmap
                 // look up a transformation
                 if (ignoreTimeStamp_)
                 {
-                    transform = tf_->lookupTransform("podi_map", msg.bodies[0].header.frame_id, msg.bodies[0].header.stamp);
+                    transform = tf_->lookupTransform(operating_frame_id_, msg.bodies[0].header.frame_id, msg.bodies[0].header.stamp);
                 }
                 else
                 {
-                    transform = tf_->lookupTransform("podi_map", msg.bodies[0].header.frame_id, ros::Time(0));
+                    transform = tf_->lookupTransform(operating_frame_id_, msg.bodies[0].header.frame_id, ros::Time(0));
                 }
                 // collect the data
                 latestPoints_.clear();
@@ -139,6 +143,7 @@ namespace tbd_costmap
                             geometry_msgs::Point transformedPoint;
                             tf2::doTransform(pelvisPoint, transformedPoint, transform);
                             latestPoints_.push_back(transformedPoint);
+                            ROS_INFO("Addeding human at %f %f", transformedPoint.x, transformedPoint.y);
                             break;
                         }
                     }
