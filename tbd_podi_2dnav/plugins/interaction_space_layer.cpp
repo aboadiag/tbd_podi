@@ -4,6 +4,7 @@
 #include <tf2/utils.h>
 #include <pluginlib/class_list_macros.h>
 #include <iostream>
+#include <math.h> 
 
 PLUGINLIB_EXPORT_CLASS(tbd_costmap::InteractionSpaceLayer, costmap_2d::Layer)
 
@@ -12,8 +13,17 @@ using costmap_2d::LETHAL_OBSTACLE;
 namespace tbd_costmap
 {
     InteractionSpaceLayer::InteractionSpaceLayer()
+        : dsrv_(NULL)
     {
         costmap_ = NULL;
+    }
+
+    InteractionSpaceLayer::~InteractionSpaceLayer()
+    {
+        if (dsrv_)
+        {
+            delete dsrv_;
+        }
     }
 
     void InteractionSpaceLayer::onInitialize()
@@ -56,10 +66,6 @@ namespace tbd_costmap
         {
             enabled_ = config.enabled;
         }
-    }
-
-    InteractionSpaceLayer::~InteractionSpaceLayer()
-    {
     }
 
     void InteractionSpaceLayer::registerPolygonList(std::vector<std::vector<geometry_msgs::Point>> &polygonList, unsigned char cost, double *min_x, double *min_y, double *max_x, double *max_y)
@@ -160,12 +166,13 @@ namespace tbd_costmap
                     }
 
                     // if there is only two points, we enlarge the space
+                    //the polygon has size of three because of the center.
                     if (polygon.size() == 3)
                     {
-                        // create a thicker line
-                        auto lineX = polygon[1].x - polygon[2].x;
-                        auto lineY = polygon[1].y - polygon[2].y;
-                        auto length = lineX + lineY;
+                        // create the line's normal
+                        auto lineX = polygon[2].x - polygon[1].x;
+                        auto lineY = polygon[2].y - polygon[1].y;
+                        auto length = sqrt(lineX * lineX + lineY * lineY);
                         lineX = lineX / length;
                         lineY = lineY / length;
                         // now we can create the line
@@ -177,10 +184,10 @@ namespace tbd_costmap
                         p1.y = polygon[1].y + lineX * width;
                         p2.x = polygon[1].x + lineY * width;
                         p2.y = polygon[1].y - lineX * width;
-                        p3.x = polygon[2].x - lineY * width;
-                        p3.y = polygon[2].y + lineX * width;
-                        p4.x = polygon[2].x + lineY * width;
-                        p4.y = polygon[2].y - lineX * width;
+                        p3.x = polygon[2].x + lineY * width;
+                        p3.y = polygon[2].y - lineX * width;
+                        p4.x = polygon[2].x - lineY * width;
+                        p4.y = polygon[2].y + lineX * width;
                         newPolygon.push_back(p1);
                         newPolygon.push_back(p2);
                         newPolygon.push_back(p3);

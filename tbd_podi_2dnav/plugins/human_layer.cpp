@@ -12,8 +12,18 @@ using costmap_2d::LETHAL_OBSTACLE;
 namespace tbd_costmap
 {
     HumanLayer::HumanLayer()
+        : dsrv_(NULL)
     {
         costmap_ = NULL;
+
+    }
+
+    HumanLayer::~HumanLayer()
+    {
+        if (dsrv_)
+        {
+            delete dsrv_;
+        }
     }
 
     void HumanLayer::onInitialize()
@@ -58,11 +68,6 @@ namespace tbd_costmap
         {
             enabled_ = config.enabled;
         }
-    }
-
-
-    HumanLayer::~HumanLayer()
-    {
     }
 
     std::vector<geometry_msgs::Point> HumanLayer::constructPolygons(geometry_msgs::Point point, double *min_x, double *min_y,
