@@ -54,9 +54,8 @@
   <depend>pluginlib</depend>
   <depend>tbd_ros_msgs</depend>
   <depend>costmap_2d</depend>
-  <build_depend>tbd_podi_common</build_depend>
-  <exec_depend>tbd_podi_common</exec_depend>
-
+  <depend>sbpl_lattice_planner</depend>
+  <depend>tbd_podi_common</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

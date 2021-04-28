@@ -12,6 +12,3 @@ local_costmap:
     - { name: interaction_space_layer, type: "tbd_costmap::InteractionSpaceLayer" }
     - { name: obstacle_layer, type: "costmap_2d::ObstacleLayer" }
     - { name: inflation_layer, type: "costmap_2d::InflationLayer" }
-
-  human_layer:
-    ignore_time_stamp: true

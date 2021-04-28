@@ -35,8 +35,11 @@ namespace tbd_podi_common
         enableMotorClient = n.serviceClient<std_srvs::Empty>("enable_motors");
         disableMotorClient = n.serviceClient<std_srvs::Empty>("disable_motors");
 
-        std_srvs::Empty srv;
-        disableMotorClient.call(srv);
+        // Podi needs a small movement at the beginning to calibrate it's odometry
+        // if we stop the motors immediately, then it would not work
+        // Reference: https://github.com/amor-ros-pkg/rosaria/issues/31
+        // std_srvs::Empty srv;
+        // disableMotorClient.call(srv);
 
         rosbagTopicName = "output_cmd_vel_stamped";
 

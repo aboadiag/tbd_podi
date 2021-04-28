@@ -9,6 +9,10 @@
 <!-- ## TODOs
 ## [Unreleased] -->
 ## [Unreleased]
+#### 2021-04-28
+- **[Added]** New map for the lab.
+- **[Fixed]** A bug where e-stopping Podi at the beginning makes it not able to calibrate.
+- **[Changed]** Updated parameters for different layers.
 #### 2021-04-19
 - **[Added]** Added a `25`mm and distinguish between version
 - **[Changed]** Local planner can now take in plugins
