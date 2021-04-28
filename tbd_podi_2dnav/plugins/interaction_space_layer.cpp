@@ -25,7 +25,6 @@ namespace tbd_costmap
         InteractionSpaceLayer::setDefaultValue(costmap_2d::FREE_SPACE);
         InteractionSpaceLayer::matchSize();
         //enable the map
-        enabled_ = true;
         current_ = true;
 
         // get the properities
@@ -38,6 +37,25 @@ namespace tbd_costmap
 
         // subscribe to the humans topic
         spaceSub_ = n.subscribe(topicName_, 1, &InteractionSpaceLayer::InteractionSpaceCB, this);
+
+        // start dynamic reconfigure
+        // modelled after from https://github.com/ros-planning/navigation
+        if (dsrv_)
+        {
+            delete dsrv_;
+        }
+        dsrv_ = new dynamic_reconfigure::Server<costmap_2d::GenericPluginConfig>(nh);
+        dynamic_reconfigure::Server<costmap_2d::GenericPluginConfig>::CallbackType cb = boost::bind(
+            &InteractionSpaceLayer::reconfigureCB, this, _1, _2);
+        dsrv_->setCallback(cb);
+    }
+
+    void InteractionSpaceLayer::reconfigureCB(costmap_2d::GenericPluginConfig &config, uint32_t level)
+    {
+        if (config.enabled != enabled_)
+        {
+            enabled_ = config.enabled;
+        }
     }
 
     InteractionSpaceLayer::~InteractionSpaceLayer()
@@ -85,12 +103,20 @@ namespace tbd_costmap
 
     void InteractionSpaceLayer::activate()
     {
+        onInitialize();
     }
+
     void InteractionSpaceLayer::deactivate()
     {
+        spaceSub_.shutdown();
     }
+
     void InteractionSpaceLayer::reset()
     {
+        deactivate();
+        //clear the whole map
+        resetMaps();
+        activate();
     }
 
     void InteractionSpaceLayer::InteractionSpaceCB(const tbd_ros_msgs::InteractionSpaceArray &msg)
@@ -159,14 +185,8 @@ namespace tbd_costmap
                         newPolygon.push_back(p2);
                         newPolygon.push_back(p3);
                         newPolygon.push_back(p4);
-                        for (auto i = 0; i < newPolygon.size(); i++)
-                        {
-                            ROS_INFO("Points: %f %f", newPolygon[i].x, newPolygon[i].y);
-                        }
                         polygon = newPolygon;
                     }
-
-                    ROS_INFO("polygon size: %i", polygon.size());
                     // add to polygone
                     polygonList.push_back(polygon);
                 }

@@ -8,6 +8,8 @@
 #include <tf2_ros/buffer.h>
 #include <vector>
 #include <geometry_msgs/Point.h>
+#include <costmap_2d/GenericPluginConfig.h>
+#include <dynamic_reconfigure/server.h>
 
 namespace tbd_costmap
 {
@@ -23,7 +25,10 @@ namespace tbd_costmap
         ros::Time lastMsgTime_;
         std::vector<std::vector<geometry_msgs::Point>> latestPolygons_;
         std::vector<std::vector<geometry_msgs::Point>> previousPolygons_;
+        dynamic_reconfigure::Server<costmap_2d::GenericPluginConfig> *dsrv_;
+
         void registerPolygonList(std::vector<std::vector<geometry_msgs::Point>> &polygonList, unsigned char cost, double *min_x, double *min_y, double *max_x, double *max_y);
+        void reconfigureCB(costmap_2d::GenericPluginConfig &config, uint32_t level);
 
     public:
         InteractionSpaceLayer();

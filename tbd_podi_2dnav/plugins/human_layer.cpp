@@ -39,7 +39,27 @@ namespace tbd_costmap
 
         // subscribe to the humans topic
         humansSub_ = n.subscribe(topicName_, 1, &HumanLayer::HumansCB, this);
+
+        // start dynamic reconfigure
+        // modelled after from https://github.com/ros-planning/navigation
+        if (dsrv_)
+        {
+            delete dsrv_;
+        }
+        dsrv_ = new dynamic_reconfigure::Server<costmap_2d::GenericPluginConfig>(nh);
+        dynamic_reconfigure::Server<costmap_2d::GenericPluginConfig>::CallbackType cb = boost::bind(
+            &HumanLayer::reconfigureCB, this, _1, _2);
+        dsrv_->setCallback(cb);
     }
+
+    void HumanLayer::reconfigureCB(costmap_2d::GenericPluginConfig &config, uint32_t level)
+    {
+        if (config.enabled != enabled_)
+        {
+            enabled_ = config.enabled;
+        }
+    }
+
 
     HumanLayer::~HumanLayer()
     {
@@ -105,12 +125,18 @@ namespace tbd_costmap
 
     void HumanLayer::activate()
     {
+        onInitialize();
     }
     void HumanLayer::deactivate()
     {
+        humansSub_.shutdown();
     }
     void HumanLayer::reset()
     {
+        deactivate();
+        //clear the whole map
+        resetMaps();
+        activate();
     }
 
     void HumanLayer::HumansCB(const tbd_ros_msgs::HumanBodyArray &msg)
@@ -143,7 +169,6 @@ namespace tbd_costmap
                             geometry_msgs::Point transformedPoint;
                             tf2::doTransform(pelvisPoint, transformedPoint, transform);
                             latestPoints_.push_back(transformedPoint);
-                            ROS_INFO("Addeding human at %f %f", transformedPoint.x, transformedPoint.y);
                             break;
                         }
                     }
