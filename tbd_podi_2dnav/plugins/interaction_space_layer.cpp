@@ -41,6 +41,7 @@ namespace tbd_costmap
         nh.param("topic", topicName_, std::string("/interaction_space"));
         nh.param("ignore_time_stamp", ignoreTimeStamp_, false);
         nh.param("observation_keep_time", keepTimeSec_, 1.0);
+        nh.param("enabled", enabled_, true);
 
         // get information about the cost map
         operating_frame_id_ = layered_costmap_->getGlobalFrameID();

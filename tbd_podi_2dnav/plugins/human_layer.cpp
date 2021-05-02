@@ -35,7 +35,7 @@ namespace tbd_costmap
         HumanLayer::setDefaultValue(costmap_2d::FREE_SPACE);
         HumanLayer::matchSize();
         //enable the map
-        enabled_ = true;
+
         current_ = true;
 
         // get the properities
@@ -43,7 +43,8 @@ namespace tbd_costmap
         nh.param("inflation", inflation_, 0.25);
         nh.param("ignore_time_stamp", ignoreTimeStamp_, false);
         nh.param("observation_keep_time", keepTimeSec_, 1.0);
-        
+        nh.param("enabled", enabled_, true);
+
         // get information about the cost map
         operating_frame_id_ = layered_costmap_->getGlobalFrameID();
 

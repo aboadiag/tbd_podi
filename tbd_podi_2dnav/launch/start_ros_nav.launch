@@ -1,14 +1,16 @@
 <launch>
 
-    <arg name="robot_name"          default="podi" />
-    <arg name="odom_frame_id"       default="podi_odom" />
-    <arg name="base_frame_id"       default="podi_base_link" />
-    <arg name="map_frame_id"        default="$(arg robot_name)_map" />
-    <arg name="map_name"            default="2020-11-nsh-3rd-entryway.yaml" />
-    <arg name="map_path"            default="$(find tbd_podi_2dnav)/maps/$(arg map_name)" />
-    <arg name="initial_pose_x"      default="0" />
-    <arg name="initial_pose_y"      default="0" />
-    <arg name="initial_pose_a"      default="0" />
+    <arg name="robot_name"              default="podi" />
+    <arg name="odom_frame_id"           default="podi_odom" />
+    <arg name="base_frame_id"           default="podi_base_link" />
+    <arg name="map_frame_id"            default="$(arg robot_name)_map" />
+    <arg name="map_name"                default="2020-11-nsh-3rd-entryway.yaml" />
+    <arg name="map_path"                default="$(find tbd_podi_2dnav)/maps/$(arg map_name)" />
+    <arg name="initial_pose_x"          default="0" />
+    <arg name="initial_pose_y"          default="0" />
+    <arg name="initial_pose_a"          default="0" />
+    <arg name="enable_human_costmaps"   default="false" />
+    
 
 
     <!-- Note that these name will be prefixed by robot_name -->
@@ -92,6 +94,10 @@
             <rosparam file="$(find tbd_podi_2dnav)/config/global_costmap_params.yaml" command="load" />
             <rosparam file="$(find tbd_podi_2dnav)/config/sbpl_global_params.yaml" command="load" />
             <rosparam file="$(find tbd_podi_2dnav)/config/base_local_planner_params.yaml" command="load" />
+            <param name="global_costmap/human_layer/enabled" value="$(arg enable_human_costmaps)" />
+            <param name="global_costmap/interaction_space_layer/enabled" value="$(arg enable_human_costmaps)" />
+            <param name="local_costmap/human_layer/enabled" value="$(arg enable_human_costmaps)" />
+            <param name="local_costmap/interaction_space_layer/enabled" value="$(arg enable_human_costmaps)" />
             <param name="SBPLLatticePlanner/primitive_filename" value="$(find sbpl_lattice_planner)/matlab/mprim/pr2.mprim" />
             <param name="base_global_planner" value="SBPLLatticePlanner" />
             <remap from="cmd_vel" to="$(arg robot_command_topic)" />
