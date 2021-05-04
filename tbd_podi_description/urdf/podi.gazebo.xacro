@@ -17,7 +17,7 @@
       <odometryTopic>$(arg robot_name)/odom</odometryTopic>
       <odometryFrame>$(arg robot_name)_odom</odometryFrame>
       <robotBaseFrame>$(arg robot_name)_base_link</robotBaseFrame>
-      <odometrySource>encoder</odometrySource>      <!-- The options are world and encoder. World means getting it straight from Gazebo -->
+      <odometrySource>world</odometrySource>      <!-- The options are world and encoder. World means getting it straight from Gazebo -->
     </plugin>
 
     <!-- ground truth -->
