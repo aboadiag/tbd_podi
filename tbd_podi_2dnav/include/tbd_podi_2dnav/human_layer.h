@@ -7,6 +7,7 @@
 #include <tf2_ros/buffer.h>
 #include <vector>
 #include <map>
+#include <thread>
 #include <geometry_msgs/Point.h>
 #include <cmath>
 #include <costmap_2d/GenericPluginConfig.h>
@@ -32,8 +33,9 @@ namespace tbd_costmap
         std::map<int, double> previousVelocities_;
         std::map<int, double> latestVelocities_;
         dynamic_reconfigure::Server<costmap_2d::GenericPluginConfig> *dsrv_;
+        std::mutex operationMutex_;
 
-        std::vector<geometry_msgs::Point> constructPolygons(geometry_msgs::Point center, geometry_msgs::Quaternion orient, double vel, double *min_x, double *min_y,
+        std::vector<geometry_msgs::Point> constructPolygon(geometry_msgs::Point center, geometry_msgs::Quaternion orient, double vel, double *min_x, double *min_y,
                                                             double *max_x, double *max_y);
         void reconfigureCB(costmap_2d::GenericPluginConfig &config, uint32_t level);
 

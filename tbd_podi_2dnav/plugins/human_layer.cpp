@@ -15,7 +15,6 @@ namespace tbd_costmap
         : dsrv_(NULL)
     {
         costmap_ = NULL;
-
     }
 
     HumanLayer::~HumanLayer()
@@ -71,62 +70,62 @@ namespace tbd_costmap
         }
     }
 
-    std::vector<geometry_msgs::Point> HumanLayer::constructPolygons(geometry_msgs::Point point, geometry_msgs::Quaternion orient, double vel, double *min_x, double *min_y,
+    std::vector<geometry_msgs::Point> HumanLayer::constructPolygon(geometry_msgs::Point point, geometry_msgs::Quaternion orient, double vel, double *min_x, double *min_y,
                                                                     double *max_x, double *max_y)
     {
         // the polygon around the human to be returned
         std::vector<geometry_msgs::Point> polygon;
-        
-        // stores the value of pi
-        double pi = atan(1)*4;
 
         // get RPY from quaternion
         // convert geometry_msgs quat to tf2 quat to get angles
         tf2::Quaternion quat_tf;
         tf2::convert(orient, quat_tf);
-        
+
         // convert the input quarernions into RPY
         double roll, pitch, yaw;
         tf2::Matrix3x3(quat_tf).getRPY(roll, pitch, yaw);
 
         // set the reference angle
-        yaw -= pi;        
+        yaw -=  M_PI;
 
         // loop and get 8 points for a ellipse type polygon
         for (int i = 0; i < 8; i++)
         {
             geometry_msgs::Point curr_point(point);
 
-            double curr_angle = 2 * pi * (i /(double)8);
+            double curr_angle = 2 * M_PI * (i / 8.0);
 
             // major and minor diameters for the ellipse
-            double a = (inflation_/(double)2);
+            double a = (inflation_ / 2.0);
             double b = inflation_ + vel; // changes based on velocity
 
-
             // ellipse offset to that their is more space in front of the person
-            double offset = (b/(double)3) + vel*3;
+            double offset = (b / 3.0) + vel * 3;
 
             // gets x and y for an ellipse, the last term is for the rotation at an offset point (found graphically using desmos)
             // these are the parametric equations for the ellipse around the person
             // you can plug these into desmos to see them in action
-            curr_point.x += a * cos(curr_angle) * cos(yaw) - b * sin(curr_angle) * sin(yaw) + offset * cos(yaw + (pi/(double)2));
-            curr_point.y += a * cos(curr_angle) * sin(yaw) + b * sin(curr_angle) * cos(yaw) + offset * sin(yaw + (pi/(double)2));
+            curr_point.x += a * cos(curr_angle) * cos(yaw) - b * sin(curr_angle) * sin(yaw) + offset * cos(yaw + (M_PI / 2.0));
+            curr_point.y += a * cos(curr_angle) * sin(yaw) + b * sin(curr_angle) * cos(yaw) + offset * sin(yaw + (M_PI / 2.0));
+
+            // check the area to be reloaded
+            *min_x = std::min(curr_point.x - inflation_, *min_x);
+            *min_y = std::min(curr_point.y - inflation_, *min_y);
+            *max_x = std::max(curr_point.x + inflation_, *max_x);
+            *max_y = std::max(curr_point.y + inflation_, *max_y);
 
             // add to the polygon
             polygon.push_back(curr_point);
         }
 
-        *min_x = std::min(point.x - inflation_, *min_x);
-        *min_y = std::min(point.y - inflation_, *min_y);
-        *max_x = std::max(point.x + inflation_, *max_x);
-        *max_y = std::max(point.y + inflation_, *max_y);
         return polygon;
     }
 
     void HumanLayer::updateBounds(double robot_x, double robot_y, double robot_yaw, double *min_x, double *min_y,
                                   double *max_x, double *max_y)
     {
+        // lock this method
+        std::lock_guard<std::mutex> operationLock(operationMutex_);
         // clear the previous polygons
         if (previousPoints_.size() > 0 && previousOrients_.size() > 0)
         {
@@ -144,19 +143,18 @@ namespace tbd_costmap
                     vel = previousVelocities_[body_id];
                 }
 
-                auto polygon = constructPolygons(point, orient, vel, min_x, min_y, max_x, max_y);
+                auto polygon = constructPolygon(point, orient, vel, min_x, min_y, max_x, max_y);
                 setConvexPolygonCost(polygon, costmap_2d::FREE_SPACE);
-
             }
         }
 
-        if ( ignoreTimeStamp_ || (lastMsgTime_ + ros::Duration(keepTimeSec_)) > ros::Time::now())
-        {         
+        if (ignoreTimeStamp_ || (lastMsgTime_ + ros::Duration(keepTimeSec_)) > ros::Time::now())
+        {
 
             // loop thorugh all of the points
             for (auto &item : latestPoints_)
             {
-                
+
                 auto body_id = item.first;
                 auto orient = latestOrients_[body_id];
                 auto point = item.second;
@@ -166,7 +164,7 @@ namespace tbd_costmap
                 if (previousPoints_.find(body_id) != previousPoints_.end())
                 {
                     auto prevPoint = previousPoints_[body_id];
-                    
+
                     double dx = std::abs(point.x - prevPoint.x);
                     double dy = std::abs(point.y - prevPoint.y);
                     vel = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
@@ -176,7 +174,7 @@ namespace tbd_costmap
 
                 // update the internel costmap
                 // using the center point, create a polygon
-                auto polygon = constructPolygons(point, orient, vel, min_x, min_y, max_x, max_y);
+                auto polygon = constructPolygon(point, orient, vel, min_x, min_y, max_x, max_y);
                 setConvexPolygonCost(polygon, costmap_2d::LETHAL_OBSTACLE);
             }
             previousPoints_ = latestPoints_;
@@ -213,6 +211,8 @@ namespace tbd_costmap
 
     void HumanLayer::HumansCB(const tbd_ros_msgs::HumanBodyArray &msg)
     {
+        // lock this method
+        std::lock_guard<std::mutex> operationLock(operationMutex_);
         if (msg.bodies.size() > 0)
         {
             geometry_msgs::TransformStamped transform;
