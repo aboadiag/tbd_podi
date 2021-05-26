@@ -36,6 +36,25 @@
         <child link="$(arg robot_name)_laser_scanner"/>
     </joint>
 
+    <link name="$(arg robot_name)_calibration_marker">
+        <xacro:box_inertial x="0.1524" y="0.1524" z="0.01" mass="0.1" />
+        <visual>
+            <origin xyz="${0.1524/2} ${0.1524/2} 0" rpy="0 0 0"/>
+            <geometry>
+                <box size=" 0.1524 0.1524 0.1" />
+            </geometry>
+            <material name="$display_color">
+                <color rgba="1 1 1 1"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="$(arg robot_name)_calibration_marker_to_base_joint" type="fixed">
+        <origin xyz="0 0.1524 ${0.234 + 0.1524}" rpy="0 0 0"/>
+        <parent link="$(arg robot_name)_base_link"/>
+        <child link="$(arg robot_name)_head_bottom_bar"/>
+    </joint>
+
     <link name="$(arg robot_name)_head_bottom_bar">
         <xacro:box_inertial x="0.0254" y="0.3048" z="0.0254" mass="0.1" />
         <visual>

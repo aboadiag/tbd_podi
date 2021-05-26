@@ -36,6 +36,7 @@
 
 	<include file="$(find zed_wrapper)/launch/zed2.launch">
 		<arg name="base_frame" value="$(arg robot_name)_front_camera_mount" />
+		<arg name="camera_name" value="$(arg robot_name)_front_camera" />
 	</include>
 
 </launch>
