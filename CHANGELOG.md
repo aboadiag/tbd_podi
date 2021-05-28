@@ -9,6 +9,11 @@
 <!-- ## TODOs
 ## [Unreleased] -->
 ## [Unreleased]
+#### 2021-05-28
+- **[Added]** CFG for human layer and interaction layer.
+- **[Added]** Now allow slack in front of the robot in interaction layer.
+- **[Changed]** Human is now a elipse - Prithu
+- **[Fixed]** Bug where human layer and interaction layer wasn't showing up correctly in local cost map.
 #### 2021-04-28
 - **[Added]** New map for the lab.
 - **[Fixed]** A bug where e-stopping Podi at the beginning makes it not able to calibrate.

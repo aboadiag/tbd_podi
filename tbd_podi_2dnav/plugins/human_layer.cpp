@@ -98,7 +98,6 @@ namespace tbd_costmap
         mapToWorld(0,0,xminb, yminb);
         mapToWorld(size_x_-1,size_y_-1,xmaxb, ymaxb);
         
-        ROS_INFO("xmax:%f min:%f ymax:%f min:%f", xmaxb, xminb, ymaxb, yminb);
         bool valid = false;
 
         // loop and get 8 points for a ellipse type polygon
@@ -125,9 +124,8 @@ namespace tbd_costmap
             // we want to bound it by the map size, if not the create polygon function won't work
             boundedPoint.x = std::max(std::min(curr_point.x, xmaxb), xminb);
             boundedPoint.y = std::max(std::min(curr_point.y, ymaxb), yminb);
-            ROS_INFO("x:%f, y:%f\n", boundedPoint.x, boundedPoint.y);
 
-            valid = (boundedPoint.x != xmaxb || boundedPoint.x != xminb) && (boundedPoint.y != ymaxb || boundedPoint.y != yminb);
+            valid = !(boundedPoint.x == xmaxb || boundedPoint.x == xminb || boundedPoint.y == ymaxb || boundedPoint.y == yminb);
 
             // check the area to be reloaded
             *min_x = std::min(boundedPoint.x, *min_x);
@@ -149,14 +147,7 @@ namespace tbd_costmap
     void HumanLayer::updateBounds(double robot_x, double robot_y, double robot_yaw, double *min_x, double *min_y,
                                   double *max_x, double *max_y)
     {
-        // update origin if its rolling map
-        if (rollingWindow_)
-        {
-            updateOrigin(robot_x - getSizeInMetersX() / 2, robot_y - getSizeInMetersY() / 2);
-        }
 
-        // lock this method
-        std::lock_guard<std::mutex> operationLock(operationMutex_);
         // clear the previous generated polygon from the map
         while (previousPolygons_.size() > 0)
         {
@@ -165,6 +156,15 @@ namespace tbd_costmap
             setConvexPolygonCost(lastPolygon, costmap_2d::FREE_SPACE);
             previousPolygons_.pop_back();
         }
+
+        // update origin if its rolling map
+        if (rollingWindow_)
+        {
+            updateOrigin(robot_x - getSizeInMetersX() / 2, robot_y - getSizeInMetersY() / 2);
+        }
+
+        // lock this method
+        std::lock_guard<std::mutex> operationLock(operationMutex_);
 
         if (ignoreTimeStamp_ || (lastMsgTime_ + ros::Duration(keepTimeSec_)) > ros::Time::now())
         {

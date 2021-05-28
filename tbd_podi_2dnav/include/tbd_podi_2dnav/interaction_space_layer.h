@@ -8,7 +8,7 @@
 #include <tf2_ros/buffer.h>
 #include <vector>
 #include <geometry_msgs/Point.h>
-#include <costmap_2d/GenericPluginConfig.h>
+#include <tbd_podi_2dnav/InteractionLayerPluginConfig.h>
 #include <dynamic_reconfigure/server.h>
 
 namespace tbd_costmap
@@ -22,13 +22,18 @@ namespace tbd_costmap
         std::string operating_frame_id_;
         double keepTimeSec_;
         bool ignoreTimeStamp_;
+        bool rollingWindow_;
         ros::Time lastMsgTime_;
+        double robotSlack_;
+        double humanSlack_;
+        int slackCost_;
         std::vector<std::vector<geometry_msgs::Point>> latestPolygons_;
         std::vector<std::vector<geometry_msgs::Point>> previousPolygons_;
-        dynamic_reconfigure::Server<costmap_2d::GenericPluginConfig> *dsrv_;
+        dynamic_reconfigure::Server<tbd_podi_2dnav::InteractionLayerPluginConfig> *dsrv_;
 
+        void registerPolygon(std::vector<geometry_msgs::Point> &polygon, unsigned char cost, double *min_x, double *min_y, double *max_x, double *max_y);
         void registerPolygonList(std::vector<std::vector<geometry_msgs::Point>> &polygonList, unsigned char cost, double *min_x, double *min_y, double *max_x, double *max_y);
-        void reconfigureCB(costmap_2d::GenericPluginConfig &config, uint32_t level);
+        void reconfigureCB(tbd_podi_2dnav::InteractionLayerPluginConfig &config, uint32_t level);
 
     public:
         InteractionSpaceLayer();
