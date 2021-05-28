@@ -46,6 +46,7 @@ namespace tbd_costmap
 
         // get information about the cost map
         operating_frame_id_ = layered_costmap_->getGlobalFrameID();
+        rollingWindow_ = layered_costmap_->isRolling();
 
         // subscribe to the humans topic
         humansSub_ = n.subscribe(topicName_, 1, &HumanLayer::HumansCB, this);
@@ -56,17 +57,21 @@ namespace tbd_costmap
         {
             delete dsrv_;
         }
-        dsrv_ = new dynamic_reconfigure::Server<costmap_2d::GenericPluginConfig>(nh);
-        dynamic_reconfigure::Server<costmap_2d::GenericPluginConfig>::CallbackType cb = boost::bind(
+        dsrv_ = new dynamic_reconfigure::Server<tbd_podi_2dnav::HumanLayerPluginConfig>(nh);
+        dynamic_reconfigure::Server<tbd_podi_2dnav::HumanLayerPluginConfig>::CallbackType cb = boost::bind(
             &HumanLayer::reconfigureCB, this, _1, _2);
         dsrv_->setCallback(cb);
     }
 
-    void HumanLayer::reconfigureCB(costmap_2d::GenericPluginConfig &config, uint32_t level)
+    void HumanLayer::reconfigureCB(tbd_podi_2dnav::HumanLayerPluginConfig &config, uint32_t level)
     {
         if (config.enabled != enabled_)
         {
             enabled_ = config.enabled;
+        }
+        if (config.inflation != inflation_)
+        {
+            inflation_ = config.inflation;
         }
     }
 
@@ -88,10 +93,19 @@ namespace tbd_costmap
         // set the reference angle
         yaw -=  M_PI;
 
+        // find the min and max of the points in the world frame.
+        double xminb, xmaxb, ymaxb, yminb;
+        mapToWorld(0,0,xminb, yminb);
+        mapToWorld(size_x_-1,size_y_-1,xmaxb, ymaxb);
+        
+        ROS_INFO("xmax:%f min:%f ymax:%f min:%f", xmaxb, xminb, ymaxb, yminb);
+        bool valid = false;
+
         // loop and get 8 points for a ellipse type polygon
         for (int i = 0; i < 8; i++)
         {
             geometry_msgs::Point curr_point(point);
+            geometry_msgs::Point boundedPoint(point);
 
             double curr_angle = 2 * M_PI * (i / 8.0);
 
@@ -108,44 +122,48 @@ namespace tbd_costmap
             curr_point.x += a * cos(curr_angle) * cos(yaw) - b * sin(curr_angle) * sin(yaw) + offset * cos(yaw + (M_PI / 2.0));
             curr_point.y += a * cos(curr_angle) * sin(yaw) + b * sin(curr_angle) * cos(yaw) + offset * sin(yaw + (M_PI / 2.0));
 
+            // we want to bound it by the map size, if not the create polygon function won't work
+            boundedPoint.x = std::max(std::min(curr_point.x, xmaxb), xminb);
+            boundedPoint.y = std::max(std::min(curr_point.y, ymaxb), yminb);
+            ROS_INFO("x:%f, y:%f\n", boundedPoint.x, boundedPoint.y);
+
+            valid = (boundedPoint.x != xmaxb || boundedPoint.x != xminb) && (boundedPoint.y != ymaxb || boundedPoint.y != yminb);
+
             // check the area to be reloaded
-            *min_x = std::min(curr_point.x - inflation_, *min_x);
-            *min_y = std::min(curr_point.y - inflation_, *min_y);
-            *max_x = std::max(curr_point.x + inflation_, *max_x);
-            *max_y = std::max(curr_point.y + inflation_, *max_y);
+            *min_x = std::min(boundedPoint.x, *min_x);
+            *min_y = std::min(boundedPoint.y, *min_y);
+            *max_x = std::max(boundedPoint.x, *max_x);
+            *max_y = std::max(boundedPoint.y, *max_y);
 
             // add to the polygon
-            polygon.push_back(curr_point);
+            polygon.push_back(boundedPoint);
         }
 
+        if (!valid)
+        {
+            polygon.clear();
+        }
         return polygon;
     }
 
     void HumanLayer::updateBounds(double robot_x, double robot_y, double robot_yaw, double *min_x, double *min_y,
                                   double *max_x, double *max_y)
     {
+        // update origin if its rolling map
+        if (rollingWindow_)
+        {
+            updateOrigin(robot_x - getSizeInMetersX() / 2, robot_y - getSizeInMetersY() / 2);
+        }
+
         // lock this method
         std::lock_guard<std::mutex> operationLock(operationMutex_);
-        // clear the previous polygons
-        if (previousPoints_.size() > 0 && previousOrients_.size() > 0)
+        // clear the previous generated polygon from the map
+        while (previousPolygons_.size() > 0)
         {
-            for (auto &item : previousPoints_)
-            {
-
-                auto body_id = item.first;
-                auto orient = previousOrients_[body_id];
-                auto point = item.second;
-
-                // get the velocity if calculated previously
-                double vel = 0.0;
-                if (previousVelocities_.find(body_id) != previousVelocities_.end())
-                {
-                    vel = previousVelocities_[body_id];
-                }
-
-                auto polygon = constructPolygon(point, orient, vel, min_x, min_y, max_x, max_y);
-                setConvexPolygonCost(polygon, costmap_2d::FREE_SPACE);
-            }
+            // get the last polygon and clear it's space
+            auto lastPolygon = previousPolygons_[previousPolygons_.size() - 1];
+            setConvexPolygonCost(lastPolygon, costmap_2d::FREE_SPACE);
+            previousPolygons_.pop_back();
         }
 
         if (ignoreTimeStamp_ || (lastMsgTime_ + ros::Duration(keepTimeSec_)) > ros::Time::now())
@@ -176,6 +194,10 @@ namespace tbd_costmap
                 // using the center point, create a polygon
                 auto polygon = constructPolygon(point, orient, vel, min_x, min_y, max_x, max_y);
                 setConvexPolygonCost(polygon, costmap_2d::LETHAL_OBSTACLE);
+                // we directly save the previous polygon because information about the shape such 
+                // as inflation or future implementation might change our ability to recreate the points
+                // while its waste more space, it causes less error.
+                previousPolygons_.push_back(polygon);
             }
             previousPoints_ = latestPoints_;
             previousOrients_ = latestOrients_;

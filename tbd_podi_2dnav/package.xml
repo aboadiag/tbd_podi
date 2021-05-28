@@ -51,6 +51,7 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <depend>navigation</depend>
+  <depend>dynamic_reconfigure</depend>
   <depend>pluginlib</depend>
   <depend>tbd_ros_msgs</depend>
   <depend>costmap_2d</depend>

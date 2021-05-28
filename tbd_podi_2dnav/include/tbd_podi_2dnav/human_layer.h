@@ -10,7 +10,7 @@
 #include <thread>
 #include <geometry_msgs/Point.h>
 #include <cmath>
-#include <costmap_2d/GenericPluginConfig.h>
+#include <tbd_podi_2dnav/HumanLayerPluginConfig.h>
 #include <dynamic_reconfigure/server.h>
 
 namespace tbd_costmap
@@ -25,19 +25,21 @@ namespace tbd_costmap
         double inflation_;
         double keepTimeSec_;
         bool ignoreTimeStamp_;
+        bool rollingWindow_;
         ros::Time lastMsgTime_;
+        std::vector<std::vector<geometry_msgs::Point>> previousPolygons_;
         std::map<int, geometry_msgs::Point> latestPoints_;
         std::map<int, geometry_msgs::Point> previousPoints_;
         std::map<int, geometry_msgs::Quaternion> latestOrients_;
         std::map<int, geometry_msgs::Quaternion> previousOrients_;
         std::map<int, double> previousVelocities_;
         std::map<int, double> latestVelocities_;
-        dynamic_reconfigure::Server<costmap_2d::GenericPluginConfig> *dsrv_;
+        dynamic_reconfigure::Server<tbd_podi_2dnav::HumanLayerPluginConfig> *dsrv_;
         std::mutex operationMutex_;
 
         std::vector<geometry_msgs::Point> constructPolygon(geometry_msgs::Point center, geometry_msgs::Quaternion orient, double vel, double *min_x, double *min_y,
                                                             double *max_x, double *max_y);
-        void reconfigureCB(costmap_2d::GenericPluginConfig &config, uint32_t level);
+        void reconfigureCB(tbd_podi_2dnav::HumanLayerPluginConfig &config, uint32_t level);
 
     public:
         HumanLayer();
