@@ -40,7 +40,7 @@
             <param name="resample_interval" value="2"/>
             <!--Number of filter updates required before resampling. -->
             
-            <param name="transform_tolerance" value="0.2" />
+            <param name="transform_tolerance" value="0.3" />
 
             <!-- Set the initiali pose in the map -->
             <param name="initial_pose_x" value="$(arg initial_pose_x)" />
@@ -87,7 +87,7 @@
             <param name="global_frame_id" value="$(arg map_frame_id)" />
         </node>
 
-        <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+        <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen" required="true">
             <rosparam file="$(find tbd_podi_2dnav)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
             <rosparam file="$(find tbd_podi_2dnav)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
             <rosparam file="$(find tbd_podi_2dnav)/config/local_costmap_params.yaml" command="load" />
@@ -98,7 +98,7 @@
             <param name="global_costmap/interaction_space_layer/enabled" value="$(arg enable_human_costmaps)" />
             <param name="local_costmap/human_layer/enabled" value="$(arg enable_human_costmaps)" />
             <param name="local_costmap/interaction_space_layer/enabled" value="$(arg enable_human_costmaps)" />
-            <param name="SBPLLatticePlanner/primitive_filename" value="$(find tbd_podi_2dnav)/config/podi.mprim" />
+            <param name="SBPLLatticePlanner/primitive_filename" value="$(find tbd_podi_2dnav)/config/podi_50mm.mprim" />
             <param name="base_global_planner" value="SBPLLatticePlanner" />
             <!-- <param name="base_global_planner" value="global_planner/GlobalPlanner" /> -->
             <!-- <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" /> -->

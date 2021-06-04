@@ -14,11 +14,14 @@ TrajectoryPlannerROS:
 
   latch_xy_goal_tolerance: true
   meter_scoring: true #Whether the gdist_scale and pdist_scale parameters should assume that goal_distance and path_distance are expressed in units of meters or cells.
-  path_distance_bias: 0.6 # 0.6 # The weighting for how much the controller should stay close to the path it was given, maximal possible value is 5.0
+  path_distance_bias: 2.0 # 0.6 # The weighting for how much the controller should stay close to the path it was given, maximal possible value is 5.0
   goal_distance_bias: 0.6 # 0.8 # The weighting for how much the controller should attempt to reach its local goal, also controls speed, maximal possible value is 5.0
   occdist_scale: 0.01 # 0.01 # how much the controller should attempt to avoid obstacles 
 
-  heading_scoring: true
+  sim_granularity: 0.05 # the map is this size
+  angular_sim_granularity: 0.047 
+
+  heading_scoring: false
   heading_scoring_timestep: 1
 
   dwa: false
