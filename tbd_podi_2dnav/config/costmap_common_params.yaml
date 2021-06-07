@@ -42,9 +42,9 @@ obstacle_layer:
 # tbd_costmap::HumanLayer
 
 human_layer:
-  ignore_time_stamp: true
+  ignore_time_stamp: false
 
 # tbd_costmap::InteractionSpaceLayer
 
 interaction_space_layer:
-  ignore_time_stamp: true
+  ignore_time_stamp: false
