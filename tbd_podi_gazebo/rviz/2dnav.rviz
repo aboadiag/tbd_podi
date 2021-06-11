@@ -13,6 +13,7 @@ Panels:
         - /global_cost_map1
         - /global_cost_map1/Status1
         - /local_cost_map1
+        - /Path1
         - /local1
       Splitter Ratio: 0.5
     Tree Height: 415
@@ -471,7 +472,7 @@ Visualization Manager:
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
-      Color: 25; 255; 0
+      Color: 78; 154; 6
       Enabled: true
       Head Diameter: 0.30000001192092896
       Head Length: 0.20000000298023224
@@ -544,7 +545,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 9.62868595123291
+      Distance: 28.288070678710938
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -560,9 +561,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.0803983211517334
+      Pitch: 0.9503984451293945
       Target Frame: <Fixed Frame>
-      Yaw: 0.3522736728191376
+      Yaw: 6.280458450317383
     Saved: ~
 Window Geometry:
   Displays:
