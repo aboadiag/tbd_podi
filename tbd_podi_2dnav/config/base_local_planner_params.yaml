@@ -21,3 +21,4 @@ TrajectoryPlannerROS:
   dwa: false
   use_dwa: false
   holonomic_robot: false #Determines whether velocity commands are generated for a holonomic or non-holonomic robot.
+  heading_scoring: false
