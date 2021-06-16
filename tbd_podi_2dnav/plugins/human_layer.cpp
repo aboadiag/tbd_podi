@@ -109,8 +109,8 @@ namespace tbd_costmap
             double curr_angle = 2 * M_PI * (i / 8.0);
 
             // major and minor diameters for the ellipse
-            double a = (inflation_ / 2.0);
-            double b = inflation_ + vel; // changes based on velocity
+            double b = (inflation_ / 2.0);
+            double a = inflation_ + vel; // changes based on velocity
 
             // ellipse offset to that their is more space in front of the person
             double offset = (b / 3.0) + vel * 3;

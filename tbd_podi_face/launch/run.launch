@@ -10,7 +10,7 @@
         <arg name="display_local" value="$(arg display_local)" />
     </include>
 
-	<node name="endpoint_server" pkg="tbd_podi_face" type="faceResponseRelay.py" output="$(arg output)" unless="$(arg sim)"/>
+	<!-- <node name="endpoint_server" pkg="tbd_podi_face" type="faceResponseRelay.py" output="$(arg output)" unless="$(arg sim)"/> -->
     <!-- Start a video web server, so the app could interface with it -->
     <node name="web_server" pkg="web_video_server" type="web_video_server" output="$(arg output)" unless="$(arg sim)"/>
 </launch>

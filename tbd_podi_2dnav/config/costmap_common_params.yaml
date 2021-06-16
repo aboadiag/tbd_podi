@@ -43,6 +43,8 @@ obstacle_layer:
 
 human_layer:
   ignore_time_stamp: false
+  inflation: 0.4
+
 
 # tbd_costmap::InteractionSpaceLayer
 
