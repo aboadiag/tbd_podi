@@ -31,8 +31,8 @@ class PodiComputerState():
             rate.sleep()
             # try to read the current state
             capacity = open(os.path.join(self._battery_dir, "capacity")).readline().strip()
-            charge_full = open(os.path.join(self._battery_dir, "charge_full")).readline().strip()
-            charge_now = open(os.path.join(self._battery_dir, "charge_now")).readline().strip()
+            charge_full = open(os.path.join(self._battery_dir, "energy_full")).readline().strip()
+            charge_now = open(os.path.join(self._battery_dir, "energy_now")).readline().strip()
             status = open(os.path.join(self._battery_dir, "status")).readline().strip()
             voltage_now = open(os.path.join(self._battery_dir, "voltage_now")).readline().strip() #represented in microvolts
             # now we add to message
