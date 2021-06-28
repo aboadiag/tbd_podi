@@ -4,6 +4,7 @@
 #include <tf2/utils.h>
 #include <pluginlib/class_list_macros.h>
 #include <iostream>
+#include <visualization_msgs/Marker.h>
 
 PLUGINLIB_EXPORT_CLASS(tbd_costmap::HumanLayer, costmap_2d::Layer)
 
@@ -15,6 +16,9 @@ namespace tbd_costmap
         : dsrv_(NULL)
     {
         costmap_ = NULL;
+
+        // DEBUG create a human pose marker pubisher for debugging
+        vis_pub = node_handle.advertise<visualization_msgs::Marker>( "visualization_marker", 0 );
     }
 
     HumanLayer::~HumanLayer()
@@ -40,6 +44,8 @@ namespace tbd_costmap
         // get the properities
         nh.param("topic", topicName_, std::string("/humans"));
         nh.param("inflation", inflation_, 0.5);
+        nh.param("ellipse_ratio", ellipse_ratio_, 2.0);
+        nh.param("ellipse_offset_ratio", ellipse_offset_ratio_, 3.0);
         nh.param("ignore_time_stamp", ignoreTimeStamp_, false);
         nh.param("observation_keep_time", keepTimeSec_, 1.0);
         nh.param("enabled", enabled_, true);
@@ -73,6 +79,15 @@ namespace tbd_costmap
         {
             inflation_ = config.inflation;
         }
+        if (config.ellipse_ratio != ellipse_ratio_)
+        {
+            ellipse_ratio_ = config.ellipse_ratio;
+        }
+        if (config.ellipse_offset_ratio != ellipse_offset_ratio_)
+        {
+            ellipse_offset_ratio_ = config.ellipse_offset_ratio;
+        }
+
     }
 
     std::vector<geometry_msgs::Point> HumanLayer::constructPolygon(geometry_msgs::Point point, geometry_msgs::Quaternion orient, double vel, double *min_x, double *min_y,
@@ -91,7 +106,7 @@ namespace tbd_costmap
         tf2::Matrix3x3(quat_tf).getRPY(roll, pitch, yaw);
 
         // set the reference angle
-        yaw -=  M_PI;
+        // yaw -=  M_PI;
 
         // find the min and max of the points in the world frame.
         double xminb, xmaxb, ymaxb, yminb;
@@ -108,18 +123,21 @@ namespace tbd_costmap
 
             double curr_angle = 2 * M_PI * (i / 8.0);
 
+            double a, b;
+
             // major and minor diameters for the ellipse
-            double b = (inflation_ / 2.0);
-            double a = inflation_ + vel; // changes based on velocity
+
+            b = (inflation_ / ellipse_ratio_);
+            a = inflation_ + vel; // changes based on velocity
 
             // ellipse offset to that their is more space in front of the person
-            double offset = (b / 3.0) + vel * 3;
+            double offset = (a / ellipse_offset_ratio_);
 
             // gets x and y for an ellipse, the last term is for the rotation at an offset point (found graphically using desmos)
             // these are the parametric equations for the ellipse around the person
             // you can plug these into desmos to see them in action
-            curr_point.x += a * cos(curr_angle) * cos(yaw) - b * sin(curr_angle) * sin(yaw) + offset * cos(yaw + (M_PI / 2.0));
-            curr_point.y += a * cos(curr_angle) * sin(yaw) + b * sin(curr_angle) * cos(yaw) + offset * sin(yaw + (M_PI / 2.0));
+            curr_point.x += a * cos(curr_angle) * cos(yaw) - b * sin(curr_angle) * sin(yaw) - offset * cos(yaw + (M_PI));
+            curr_point.y += a * cos(curr_angle) * sin(yaw) + b * sin(curr_angle) * cos(yaw) - offset * sin(yaw + (M_PI));
 
             // we want to bound it by the map size, if not the create polygon function won't work
             boundedPoint.x = std::max(std::min(curr_point.x, xmaxb), xminb);
@@ -274,6 +292,28 @@ namespace tbd_costmap
                             latestPoints_[body_id] = transformedPoint;
                             latestOrients_[body_id] = pelvisOrient;
                             // std::cout << "there" << std::endl;
+
+                            // DEBUG publish the human position marker
+                            visualization_msgs::Marker marker;
+                            marker.header.frame_id = "PsiWorld";
+                            marker.header.stamp = ros::Time();
+                            marker.ns = "my_namespace";
+                            marker.id = 0;
+                            marker.type = visualization_msgs::Marker::ARROW;
+                            marker.action = visualization_msgs::Marker::ADD;
+                            marker.pose.position.x = transformedPoint.x;
+                            marker.pose.position.y = transformedPoint.y;
+                            marker.pose.position.z = 0;
+                            marker.pose.orientation = pelvisOrient;
+                            marker.scale.x = 1;
+                            marker.scale.y = 0.1;
+                            marker.scale.z = 0.1;
+                            marker.color.a = 1.0; // Don't forget to set the alpha!
+                            marker.color.r = 0.0;
+                            marker.color.g = 1.0;
+                            marker.color.b = 0.0;
+                            vis_pub.publish( marker );
+
                             break;
                         }
                     }

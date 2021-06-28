@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   pluginlib
   costmap_2d
   dynamic_reconfigure
+  visualization_msgs # DEBUG
 )
 
 ## System dependencies are found with CMake's conventions
@@ -112,6 +113,7 @@ catkin_package(
     tbd_ros_msgs
     pluginlib
     costmap_2d
+    visualization_msgs # DEBUG
 #  CATKIN_DEPENDS move_base tbd_podi_common
 #  DEPENDS system_lib
 )

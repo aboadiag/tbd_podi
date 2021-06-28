@@ -23,6 +23,8 @@ namespace tbd_costmap
         std::string topicName_;
         std::string operating_frame_id_;
         double inflation_;
+        double ellipse_ratio_;
+        double ellipse_offset_ratio_;
         double keepTimeSec_;
         bool ignoreTimeStamp_;
         bool rollingWindow_;
@@ -54,6 +56,10 @@ namespace tbd_costmap
         virtual void reset();
 
         void HumansCB(const tbd_ros_msgs::HumanBodyArray &msg);
+
+        // DEBUG publisher for human pose
+        ros::NodeHandle node_handle;
+        ros::Publisher vis_pub;
     };
 
 } // namespace tbd_costmap
