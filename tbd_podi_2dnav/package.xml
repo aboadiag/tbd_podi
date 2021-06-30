@@ -57,6 +57,9 @@
   <depend>costmap_2d</depend>
   <depend>sbpl_lattice_planner</depend>
   <depend>tbd_podi_common</depend>
+  
+  <!-- DEBUG -->
+  <depend>visualization_msgs</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
