@@ -10,10 +10,10 @@
                robot_name:=$(arg robot_name)
                handle_control:=$(arg handle_control)" 
     />
-
-  	<node name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" if="$(arg gui)"/>    
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
-
+    <group ns="podi">
+      <node name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" if="$(arg gui)"/>    
+      <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    </group>
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find tbd_podi_description)/rviz/podi_urdf.rviz" required="true" />
 
 </launch>
