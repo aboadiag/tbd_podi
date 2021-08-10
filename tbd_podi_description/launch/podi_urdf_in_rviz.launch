@@ -5,7 +5,7 @@
   	<arg name="handle_control"  default="move" />
   	<arg name="robot_name" 			default="podi" />
 
-  	<param name="robot_description" 
+  	<param name="/podi/robot_description" 
       command="$(find xacro)/xacro $(arg xacro)
                robot_name:=$(arg robot_name)
                handle_control:=$(arg handle_control)" 
