@@ -73,19 +73,30 @@ namespace tbd_podi_common
         ROS_INFO("Starting recording to rosbag %s", buffer);
         {
             std::lock_guard<std::mutex> isRecordingRosbagOpenLock(isRecordingRosbagOpenMutex);
-            currentRecordingBag = new rosbag::Bag(filename, rosbag::bagmode::Write);
-            isRecordingRosbagOpen = true;
+            try
+            {
+                currentRecordingBag = new rosbag::Bag(filename, rosbag::bagmode::Write);
+                isRecordingRosbagOpen = true;
+            }
+            catch (rosbag::BagIOException ex)
+            {
+                ROS_ERROR("Unable to Open Bag at Path: %s Error:%s", filename.c_str(), ex.what());
+            }
         }
     }
 
     void ControlRobot::stopBagRecording()
     {
-        ROS_INFO("Closing the rosbag we were recording to");
         {
+            
             std::lock_guard<std::mutex> isRecordingRosbagOpenLock(isRecordingRosbagOpenMutex);
-            isRecordingRosbagOpen = false;
-            currentRecordingBag->close();
-            delete currentRecordingBag;
+            if (isRecordingRosbagOpen)
+            {
+                ROS_INFO("Closing the rosbag we were recording to.");
+                isRecordingRosbagOpen = false;
+                currentRecordingBag->close();
+                delete currentRecordingBag;
+            }
         }
     }
 
@@ -289,82 +300,90 @@ namespace tbd_podi_common
     void ControlRobot::playbackBagFn(std::string playbackRosbagPath, double p)
     {
         ROS_INFO("Opening rosbag %s", playbackRosbagPath.c_str());
-        rosbag::Bag playbackBag(playbackRosbagPath, rosbag::bagmode::Read);
-        std::vector<std::string> topics;
-        topics.push_back(std::string(rosbagTopicName));
-        rosbag::View view(playbackBag, rosbag::TopicQuery(topics));
-        bool firstIter = true;
-        double sumErr = 0.0, sumAbsErr = 0.0, minErr = 0.0, maxErr = 0.0;
-        int n = 0;
-        ros::Time timeAtEndOfSleep, lastIterBagTime;
-        ros::Duration elapsedTimeNotIncludingSleep, elapsedActualTime, elapsedBagTime,
-            errorTime, pdErrorTime, lastErrorTime, scaledDerivativeErrorTime,
-            timeToSleep, zero = ros::Duration(0.0);
-        // ROS_INFO("Starting playback from rosbag %s, FYI n=%d", playbackRosbagPath.c_str(), n);
-        BOOST_FOREACH (rosbag::MessageInstance const m, view)
+        try
         {
-            geometry_msgs::TwistStamped::ConstPtr spd = m.instantiate<geometry_msgs::TwistStamped>();
-            if (spd != NULL)
+            rosbag::Bag playbackBag(playbackRosbagPath, rosbag::bagmode::Read);
+            std::vector<std::string> topics;
+            topics.push_back(std::string(rosbagTopicName));
+            rosbag::View view(playbackBag, rosbag::TopicQuery(topics));
+            bool firstIter = true;
+            double sumErr = 0.0, sumAbsErr = 0.0, minErr = 0.0, maxErr = 0.0;
+            int n = 0;
+            ros::Time timeAtEndOfSleep, lastIterBagTime;
+            ros::Duration elapsedTimeNotIncludingSleep, elapsedActualTime, elapsedBagTime,
+                errorTime, pdErrorTime, lastErrorTime, scaledDerivativeErrorTime,
+                timeToSleep, zero = ros::Duration(0.0);
+            // ROS_INFO("Starting playback from rosbag %s, FYI n=%d", playbackRosbagPath.c_str(), n);
+            BOOST_FOREACH (rosbag::MessageInstance const m, view)
             {
-                // ROS_INFO("Playback spd lin_spd: %0.2f, ang_spd: %0.2f", spd->twist.linear.x, spd->twist.angular.z);
-                if (firstIter)
+                geometry_msgs::TwistStamped::ConstPtr spd = m.instantiate<geometry_msgs::TwistStamped>();
+                if (spd != NULL)
                 {
-                    lastIterBagTime = spd->header.stamp;
-                    firstIter = false;
-                    timeAtEndOfSleep = ros::Time::now();
+                    // ROS_INFO("Playback spd lin_spd: %0.2f, ang_spd: %0.2f", spd->twist.linear.x, spd->twist.angular.z);
+                    if (firstIter)
+                    {
+                        lastIterBagTime = spd->header.stamp;
+                        firstIter = false;
+                        timeAtEndOfSleep = ros::Time::now();
+                    }
+                    else
+                    {
+                        elapsedBagTime = spd->header.stamp - lastIterBagTime;
+                        lastIterBagTime = spd->header.stamp;
+                        pdErrorTime = ros::Duration(p * errorTime.toSec());
+                        elapsedTimeNotIncludingSleep = ros::Time::now() - timeAtEndOfSleep;
+                        timeToSleep = elapsedBagTime - elapsedTimeNotIncludingSleep - pdErrorTime;
+                        if (timeToSleep > zero)
+                            timeToSleep.sleep(); // adjust for time
+                        elapsedActualTime = ros::Time::now() - timeAtEndOfSleep;
+                        timeAtEndOfSleep = ros::Time::now();
+                        ++n;
+                        lastErrorTime = errorTime;
+                        errorTime = elapsedActualTime - elapsedBagTime;
+                        sumErr = sumErr + errorTime.toSec();
+                        sumAbsErr = sumAbsErr + fabs(errorTime.toSec());
+                        minErr = std::min(errorTime.toSec(), minErr);
+                        maxErr = std::max(errorTime.toSec(), maxErr);
+                    }
+                    std::unique_lock<std::mutex> playingBackLock(playingBackMutex);
+                    if (playingBack)
+                    {
+                        playingBackLock.unlock();
+                        std::unique_lock<std::mutex> playbackLock(playbackVelMutex);
+                        playbackVel = spd->twist;
+                        newPlaybackVel = true;
+                        playbackLock.unlock();
+                    }
+                    else
+                    {
+                        playingBackLock.unlock();
+                        newPlaybackVel = false;
+                        break;
+                    }
                 }
-                else
+                if (ros::isShuttingDown())
                 {
-                    elapsedBagTime = spd->header.stamp - lastIterBagTime;
-                    lastIterBagTime = spd->header.stamp;
-                    pdErrorTime = ros::Duration(p * errorTime.toSec());
-                    elapsedTimeNotIncludingSleep = ros::Time::now() - timeAtEndOfSleep;
-                    timeToSleep = elapsedBagTime - elapsedTimeNotIncludingSleep - pdErrorTime;
-                    if (timeToSleep > zero)
-                        timeToSleep.sleep(); // adjust for time
-                    elapsedActualTime = ros::Time::now() - timeAtEndOfSleep;
-                    timeAtEndOfSleep = ros::Time::now();
-                    ++n;
-                    lastErrorTime = errorTime;
-                    errorTime = elapsedActualTime - elapsedBagTime;
-                    sumErr = sumErr + errorTime.toSec();
-                    sumAbsErr = sumAbsErr + fabs(errorTime.toSec());
-                    minErr = std::min(errorTime.toSec(), minErr);
-                    maxErr = std::max(errorTime.toSec(), maxErr);
-                }
-                std::unique_lock<std::mutex> playingBackLock(playingBackMutex);
-                if (playingBack)
-                {
-                    playingBackLock.unlock();
-                    std::unique_lock<std::mutex> playbackLock(playbackVelMutex);
-                    playbackVel = spd->twist;
-                    newPlaybackVel = true;
-                    playbackLock.unlock();
-                }
-                else
-                {
-                    playingBackLock.unlock();
-                    newPlaybackVel = false;
                     break;
                 }
             }
-            if (ros::isShuttingDown())
+            ROS_INFO("Stopping playback from rosbag %s", playbackRosbagPath.c_str());
+            // Close Rosbag when done
             {
-                break;
+                std::lock_guard<std::mutex> playingBackLock(playingBackMutex);
+                if (playingBack)
+                {
+                    newPlayingBack = true;
+                }
+                playingBack = false;
             }
+            ROS_INFO("Closing rosbag %s", playbackRosbagPath.c_str());
+            playbackBag.close();
         }
-        ROS_INFO("Stopping playback from rosbag %s", playbackRosbagPath.c_str());
-        // Close Rosbag when done
+        catch (rosbag::BagException eb)
         {
-            std::lock_guard<std::mutex> playingBackLock(playingBackMutex);
-            if (playingBack)
-            {
-                newPlayingBack = true;
-            }
-            playingBack = false;
+            ROS_ERROR("Unable to open or play bag at: %s due to %s" , playbackRosbagPath.c_str(), eb.what());
+            return;
         }
-        ROS_INFO("Closing rosbag %s", playbackRosbagPath.c_str());
-        playbackBag.close();
     }
 
     void ControlRobot::publishVelocity(geometry_msgs::Twist &spd)
@@ -386,7 +405,7 @@ namespace tbd_podi_common
 
     void ControlRobot::joyCB(const sensor_msgs::Joy &msg)
     {
-        // check if the estop or the restart button is pressed 
+        // check if the estop or the restart button is pressed
         if (msg.buttons[button_mapping::estop_button] || msg.buttons[button_mapping::restart_robot])
         {
             std::lock_guard<std::mutex> emergencyStopLock(emergencyStopMutex);
@@ -397,7 +416,7 @@ namespace tbd_podi_common
                 emergencyStop = true;
                 // call motor disable
                 std_srvs::Empty srv;
-                disableMotorClient.call(srv);     
+                disableMotorClient.call(srv);
                 ROS_INFO("EMERGENCY STOP BUTTON PRESSED!!!");
             }
             else if (msg.buttons[button_mapping::restart_robot] && emergencyStop)
@@ -407,11 +426,11 @@ namespace tbd_podi_common
                 emergencyStop = false;
                 // call motor disable
                 std_srvs::Empty srv;
-                enableMotorClient.call(srv);    
-                ROS_INFO("ROBOT MOTORS RE-ENABLED!!!"); 
+                enableMotorClient.call(srv);
+                ROS_INFO("ROBOT MOTORS RE-ENABLED!!!");
             }
         }
-        
+
         //update the enabling switch value
         {
             std::lock_guard<std::mutex> enablingSwitchLock(enablingSwitchMutex_);
@@ -466,7 +485,7 @@ namespace tbd_podi_common
             return;
         }
 
-        // handle joysitck movement commands 
+        // handle joysitck movement commands
         geometry_msgs::Twist spd;
         spd.linear.x = lin_max * msg.axes[axis_mapping::linear_movement];
         spd.angular.z = ang_max * msg.axes[axis_mapping::rotation_movement];

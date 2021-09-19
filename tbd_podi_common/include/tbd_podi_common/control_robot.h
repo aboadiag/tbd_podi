@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <rosbag/bag.h>
+#include <rosbag/exceptions.h>
 #include <rosbag/view.h>
 #include <cstdio>
 #include <ctime>
