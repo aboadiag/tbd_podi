@@ -186,11 +186,9 @@ namespace tbd_costmap
 
         if (ignoreTimeStamp_ || (lastMsgTime_ + ros::Duration(keepTimeSec_)) > ros::Time::now())
         {
-
             // loop thorugh all of the points
             for (auto &item : latestPoints_)
             {
-
                 auto body_id = item.first;
                 auto orient = latestOrients_[body_id];
                 auto point = item.second;
