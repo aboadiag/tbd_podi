@@ -33,7 +33,11 @@
     </plugin> -->
   </gazebo>
 
+<<<<<<< HEAD
   <gazebo reference="$(arg robot_name)_laser_scanner">
+=======
+  <gazebo reference="laser_scanner">
+>>>>>>> 3b3ed4b43d7afc31d1f5624e01a90cc604a4f01c
     <sensor type="ray" name="lms100x">
       <pose>0 0 0 0 0 0</pose>
       <!-- <visualize>true</visualize> -->
