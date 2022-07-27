@@ -8,6 +8,16 @@
 ## [0.2.0] - 2020-04-17 -->
 <!-- ## TODOs
 ## [Unreleased] -->
+
+## [1.6.0] - 2021-03-25
+- **[Added]** Map for simulated lab.
+- **[Changed]** Fix the simulator map being the wrong map.
+- **[Changed]** Change simulator's output topic name to match names from RosAria.
+- **[Changed]** Controller will now publish [0,0] movement if there is no incoming movement signals.
+- **[Changed]** simplify map building in simulator.
+- **[Changed]** Increase Podi's minimum/maximum rotation speed
+- **[Fixed]** Podi's description was set incorrectly.
+
 ## [1.5.0]
 - **[Added]** Added enabling switch to Podi. When true, the button must be hold down to move.
 - **[Added]** 3rd floor hallway map in NSH.

@@ -256,15 +256,17 @@ void ControlRobot::spin()
                         lastPublishedSpd = spdToPublish;
                         lastVelPublishTime = ros::Time::now();
                         ControlRobot::publishVelocity(spdToPublish);
+                        continue;
                     }
                     else
                     {
                         if (ros::Time::now() - lastVelPublishTime < velLatchDuration)
                         {
                             ControlRobot::publishVelocity(lastPublishedSpd);
+                            continue;
                         }
                     }
-                    continue;
+                    
                 }
                 // publish empty velocity
                 geometry_msgs::Twist spd; // default is a zero twist

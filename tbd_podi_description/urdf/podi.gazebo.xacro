@@ -13,7 +13,7 @@
       <publishWheelJointState>true</publishWheelJointState>
       <publishWheelTF>false</publishWheelTF>
       <wheelAcceleration>1</wheelAcceleration>
-      <commandTopic>$(arg robot_name)/cmd_vel</commandTopic>
+      <commandTopic>/RosAria/cmd_vel</commandTopic> <!-- We choose to name it to match the robot's IRL command name-->
       <odometryTopic>$(arg robot_name)/odom</odometryTopic>
       <odometryFrame>$(arg robot_name)_odom</odometryFrame>
       <robotBaseFrame>$(arg robot_name)_base_link</robotBaseFrame>
@@ -59,7 +59,7 @@
         </noise>
       </ray>
       <plugin name="$(arg robot_name)_front_lidar_controller" filename="libgazebo_ros_laser.so">
-        <topicName>$(arg robot_name)/laser</topicName>
+        <topicName>/RosAria/lms1xx_1_laserscan</topicName>
         <frameName>$(arg robot_name)_laser_scanner</frameName>
       </plugin>
     </sensor>
