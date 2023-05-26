@@ -4,12 +4,11 @@
     <arg name="odom_frame_id"       default="podi_odom" />
     <arg name="base_frame_id"       default="podi_base_link" />
     <arg name="map_frame_id"        default="$(arg robot_name)_map" />
-    <arg name="map_name"            default="2020-11-nsh-3rd-entryway.yaml" />
+    <arg name="map_name"            default="nshA.yaml" />
     <arg name="map_path"            default="$(find tbd_podi_2dnav)/maps/$(arg map_name)" />
     <arg name="initial_pose_x"      default="0" />
     <arg name="initial_pose_y"      default="0" />
     <arg name="initial_pose_a"      default="0" />
-
 
     <!-- Note that these name will be prefixed by robot_name -->
     <arg name="robot_command_topic" default="nav_cmd_vel" />

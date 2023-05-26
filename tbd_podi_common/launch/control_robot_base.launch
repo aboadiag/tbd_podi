@@ -16,6 +16,11 @@
 	<arg name="nav_topic_name" default="nav_cmd_vel" />
 	<arg name="output" default="screen" />
 
+	<arg name="incoming_odom_topic_name" default="/RosAria/pose" />
+
+    <!-- ZED2 camera and a GPU machine required to run this-->
+    <arg name="enable_obj_detection" default="true" />
+
 	<!-- Launch ROSARIA, which communicates with the P3DX Base -->
 	<node pkg = "rosaria" type = "RosAria" name = "RosAria" output="$(arg output)" unless="$(arg sim)">
 		<param name="port" value="$(arg rosaria_port)" type="string"/>
@@ -23,7 +28,22 @@
 		<param name="odom_frame" value="$(arg robot_name)_odom" type="string"/>
 		<param name="laser_frame" value="$(arg robot_name)_laser_scanner" type="string"/>
 		<param name="publish_aria_lasers" value="$(arg rosaria_publish_lasers)" type="bool"/>
+
+		<remap from="$(arg incoming_odom_topic_name)" to="$(arg robot_name)/odom"/>
 	</node>
+
+    <group if="$(arg enable_obj_detection)">
+        <include file="$(find tbd_podi_zed)/launch/zed_camera.launch">
+            <arg name="robot_name" value="$(arg robot_name)"/>
+
+            <arg name="cam_pos_x" value="0.0"/>
+            <arg name="cam_pos_y" value="0.0"/>
+            <arg name="cam_pos_z" value="0.0"/>
+            <arg name="cam_roll"  value="0.0"/>
+            <arg name="cam_pitch" value="0.0"/>
+            <arg name="cam_yaw"   value="0.0"/>
+        </include>
+    </group>
 
 	<!-- Launch the accompany nodes -->
 	<group ns="$(arg robot_name)">
@@ -50,10 +70,6 @@
 			command="$(find xacro)/xacro $(arg xacro)
 					robot_name:=$(arg robot_name)" 
 		/>
-
-		<!-- Launch the node that monitors the handle height and rotation -->
-		<node pkg="tbd_podi_common" type="handle_state_node.py" name="handle_state_node" output="$(arg output)" unless="$(arg sim)">
-		</node>
 
 		<!-- Launch the node that monitors computer's battery health -->
 		<node pkg="tbd_podi_common" type="computer_state_node.py" name="computer_state_node" output="$(arg output)" unless="$(arg sim)" />

@@ -387,11 +387,11 @@ void ControlRobot::joyCB(const sensor_msgs::Joy &msg)
     double lin_axes = msg.axes[1]; // left thumb joystick
     double ang_axes = msg.axes[3]; // right thumb joystick
 
-    if (joystickType_ == "logitech-dual-action")
-    {
-        //remap
-        ang_axes = msg.axes[2];
-    }
+    //if (joystickType_ == "logitech-dual-action")
+    //{
+    //    //remap
+    //    ang_axes = msg.axes[2];
+    //}
     
     // check enabling switch
     if (msg.buttons[7])

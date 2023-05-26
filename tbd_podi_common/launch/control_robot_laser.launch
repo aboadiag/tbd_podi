@@ -12,10 +12,13 @@
 	<arg name="use_joy" 						default="true" />
 	<arg name="enabling_switch" 				default="true" />
 	<arg name="motor_topic_name" 				default="/RosAria/cmd_vel" />
+	<arg name="incoming_odom_topic_name"		default="/RosAria/pose" />
 	<arg name="incoming_laser_topic_name"		default="/RosAria/lms1xx_1_laserscan" />
 	<arg name="trans_laser_topic_name"			default="laser" />
 	<arg name="nav_topic_name" 					default="nav_cmd_vel" />
 	<arg name="output" 							default="screen" />
+
+    <arg name="enable_obj_detection"            default="true"/>
 
 	<include file="$(find tbd_podi_common)/launch/control_robot_base.launch">
 		<arg name="output" 						value="$(arg output)" />
@@ -33,13 +36,16 @@
 		<arg name="motor_topic_name" 			value="$(arg motor_topic_name)" />
 		<arg name="enabling_switch" 			value="$(arg enabling_switch)" />
 		<arg name="nav_topic_name" 				value="$(arg nav_topic_name)" />
+        <arg name="enable_obj_detection"        value="$(arg enable_obj_detection)"/>
+
 	</include>
 
 	<!-- Launch related nodes -->
 	<group ns="$(arg robot_name)">
 
 		<!-- Node that crop the laser output -->
-		<node pkg="tbd_podi_common" type="laser_scan_frame_transform" name="podi_laser_scan_frame_transform" output="$(arg output)">
+		<node pkg="tbd_podi_common" type="laser_scan_frame_transform" name="laser_scan_frame_transform" output="$(arg output)">
+			<param name="output_frame_id" value="$(arg robot_name)_laser_scanner" type="string" />
 			<remap from="laser" 			to="$(arg incoming_laser_topic_name)" />
 			<remap from="transformed_laser" to="$(arg trans_laser_topic_name)" />
 		</node>
