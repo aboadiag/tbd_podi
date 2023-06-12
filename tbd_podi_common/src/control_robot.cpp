@@ -269,6 +269,8 @@ namespace tbd_podi_common
                             // TODO: Explore in future the ability to assign weights
                             spdToPublish.linear.x = lastJoySpd.linear.x + lastPlaybackSpd.linear.x + lastNavigationSpd.linear.x;
                             spdToPublish.angular.z = lastJoySpd.angular.z + lastPlaybackSpd.angular.z + lastNavigationSpd.angular.z;
+                            // ROS_INFO("speed: [%0.2f,%0.2f]", spdToPublish.linear.x, spdToPublish.angular.z);            
+
                             lastPublishedSpd = spdToPublish;
                             lastVelPublishTime = ros::Time::now();
                             ControlRobot::publishVelocity(spdToPublish);
@@ -437,6 +439,7 @@ namespace tbd_podi_common
             if (msg.axes[axis_mapping::enabling_switch] < -0.5)
             {
                 enablingSwitchState_ = true;
+                //ROS_INFO("ENABLING");
             }
             else
             {
@@ -455,11 +458,13 @@ namespace tbd_podi_common
             std::lock_guard<std::mutex> recordingLock(recordingMutex);
             if (msg.buttons[button_mapping::start_record_bag] && !recording)
             {
+                ROS_INFO("Received rosbag start recording command from the joystick");
                 newRecording = true;
                 recording = true;
             }
             else if (msg.buttons[button_mapping::stop_record_bag] && recording)
             {
+                ROS_INFO("Received rosbag stop recording command from the joystick");
                 newRecording = true;
                 recording = false;
             }
@@ -472,13 +477,13 @@ namespace tbd_podi_common
             std::lock_guard<std::mutex> playingBackLock(playingBackMutex);
             if (msg.buttons[button_mapping::start_replay_bag] && !playingBack)
             {
-                ROS_INFO("Received the openning rosbag command from the joystick for playback");
+                ROS_INFO("Received the opening rosbag command from the joystick for playback");
                 newPlayingBack = true;
                 playingBack = true;
             }
             else if (msg.buttons[button_mapping::stop_replay_bag] && playingBack)
             {
-                ROS_INFO("Received the Opening rosbag command from the joystick for playback");
+                ROS_INFO("Received the closing rosbag command from the joystick for playback");
                 newPlayingBack = true;
                 playingBack = false;
             }
@@ -492,6 +497,7 @@ namespace tbd_podi_common
         {
             std::lock_guard<std::mutex> joyLock(joyVelMutex);
             joyVel = spd;
+            // ROS_INFO("joy speed: [%0.2f,%0.2f]", spd.linear.x, spd.angular.z);            
             newJoyVel = true;
         }
         return;

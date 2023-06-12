@@ -6,7 +6,7 @@
 	<arg name="rosbag_recording_base_path" 		default="$(find tbd_podi_common)/bagfiles/"/>
 	<arg name="playback_rosbag_path" 			default=""/>
 	<arg name="xacro" 							default="$(find tbd_podi_description)/urdf/podi.urdf.xacro"/>  	
-	<arg name="launch_rviz" 					default="false" />
+	<arg name="launch_rviz" 					default="true" />
 	<arg name="rviz_config_path" 				default="$(find tbd_podi_common)/rviz/podi_default_laser.rviz" />
 	<arg name="sim" 							default="false"/>
 	<arg name="use_joy" 						default="true" />
